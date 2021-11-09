@@ -1,14 +1,13 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import "./index.css";
+import RegisterScreen from "./component/RegisterScreen";
 
-class HelloMessage extends React.Component {
-  render() {
-    return React.createElement("div", null, "Hello ", this.props.name);
-  }
+function goToRegisterScreen() {
+  return this.props.navigation.navigate(RegisterScreen);
 }
 
-ReactDOM.render(
-  React.createElement(HelloMessage, { name: "Jakob" }),
-  document.getElementById("root")
-);
+class index extends React.Component {
+  render() {
+    return goToRegisterScreen();
+  }
+}
