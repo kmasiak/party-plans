@@ -1,11 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import LoginScreen from "./LoginScreen";
+import React, { useState } from "react";
+import "../css/RegisterScreen.css";
 
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import FormGroup from "@material-ui/core/FormGroup";
-import TextField from "@material-ui/core/TextField";
+import {
+  Button,
+  Container,
+  FormGroup,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@material-ui/core";
+import PartyPlans from "../images/party-plans.png";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
+
+import { Link } from "react-router-dom";
 
 const userInputProps = {
   fname: "",
@@ -14,7 +21,7 @@ const userInputProps = {
   password: "",
 };
 
-function registerUser() {
+function onRegisterUser() {
   var user_f_name = userInputProps.fname.value;
   var user_l_name = userInputProps.lname.value;
   var user_email = userInputProps.email.value;
@@ -26,7 +33,6 @@ function registerUser() {
     user_password === ""
   ) {
     alert("Please fill in all required fields.");
-    //document.getElementById("firstName").error = true; - does not work
   } else {
     alert(
       "First Name: " +
@@ -41,102 +47,105 @@ function registerUser() {
   }
 }
 
-function goToLoginScreen() {
-  this.props.navivagation.navigate(LoginScreen);
-}
-
-//TODO: Replace image with Party Plans Logo
-export default class RegisterScreen extends React.Component {
-  render() {
-    return (
-      <Container maxWidth="sm">
-        <img
-          src="../logo512.png"
-          alt="Party Plans Logo"
-          style={{
-            height: "25%",
-            width: "25%",
-            display: "block",
-            marginLeft: "auto",
-            marginRight: "auto",
+export default function RegisterScreen() {
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = () => setShowPassword(!showPassword);
+  return (
+    <Container maxWidth="sm">
+      <img
+        className="imgReg"
+        src={PartyPlans}
+        alt="Party Plans Logo"
+        style={{
+          height: "25%",
+          width: "25%",
+          display: "block",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+      />
+      <h1 className="h1Reg">Register Account</h1>
+      <FormGroup className="FormGroupReg">
+        <TextField
+          required
+          id="firstName"
+          className="TextFieldReg"
+          type="text"
+          label="First Name"
+          variant="outlined"
+          margin="normal"
+          inputRef={(ref) => {
+            userInputProps.fname = ref;
+          }}
+          inputProps={{ maxLength: 45 }}
+        />
+        <TextField
+          required
+          id="lastName"
+          className="TextFieldReg"
+          type="text"
+          label="Last Name"
+          variant="outlined"
+          margin="normal"
+          inputRef={(ref) => {
+            userInputProps.lname = ref;
+          }}
+          inputProps={{ maxLength: 45 }}
+        />
+        <TextField
+          required
+          id="email"
+          className="TextFieldReg"
+          type="text"
+          label="Email"
+          variant="outlined"
+          props="required"
+          margin="normal"
+          inputRef={(ref) => {
+            userInputProps.email = ref;
+          }}
+          inputProps={{ maxLength: 45 }}
+        />
+        <TextField
+          required
+          id="password"
+          className="TextFieldReg"
+          type={showPassword ? "text" : "password"}
+          label="Password"
+          variant="outlined"
+          margin="normal"
+          inputRef={(ref) => {
+            userInputProps.password = ref;
+          }}
+          inputProps={{ maxLength: 45 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
-        <h1 style={{ textAlign: "center" }}>Register Account</h1>
-        <FormGroup
-          style={{
-            backgroundColor: "#F5F5F5",
-            padding: "25px",
-            borderRadius: "25px",
-          }}
+        <br />
+        <Button
+          variant="contained"
+          style={{ backgroundColor: "#DC143C", color: "white" }}
+          onClick={() => onRegisterUser()}
         >
-          <TextField
-            required
-            id="firstName"
-            type="text"
-            label="First Name"
-            variant="outlined"
-            margin="normal"
-            style={{ backgroundColor: "white" }}
-            inputRef={(ref) => {
-              userInputProps.fname = ref;
-            }}
-            inputProps={{ maxLength: 45 }}
-          />
-          <TextField
-            required
-            id="lastName"
-            type="text"
-            label="Last Name"
-            variant="outlined"
-            margin="normal"
-            style={{ backgroundColor: "white" }}
-            inputRef={(ref) => {
-              userInputProps.lname = ref;
-            }}
-            inputProps={{ maxLength: 45 }}
-          />
-          <TextField
-            required
-            id="email"
-            type="text"
-            label="Email"
-            variant="outlined"
-            props="required"
-            margin="normal"
-            style={{ backgroundColor: "white" }}
-            inputRef={(ref) => {
-              userInputProps.email = ref;
-            }}
-            inputProps={{ maxLength: 45 }}
-          />
-          <TextField
-            required
-            id="password"
-            type="text"
-            label="Password"
-            variant="outlined"
-            margin="normal"
-            style={{ backgroundColor: "white" }}
-            inputRef={(ref) => {
-              userInputProps.password = ref;
-            }}
-            inputProps={{ maxLength: 45 }}
-          />
-          <br />
-          <Button
-            variant="contained"
-            style={{ backgroundColor: "#DC143C", color: "white" }}
-            onClick={() => registerUser()}
-          >
-            Register
-          </Button>
-        </FormGroup>
-      </Container>
-    );
-  }
+          Register
+        </Button>
+        <br />
+        <Button component={Link} to="/">
+          Already have an account? Login
+        </Button>
+      </FormGroup>
+    </Container>
+  );
 }
-
-ReactDOM.render(
-  React.createElement(RegisterScreen),
-  document.getElementById("root")
-);

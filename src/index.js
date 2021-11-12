@@ -1,13 +1,5 @@
 import React from "react";
-import "./index.css";
-import RegisterScreen from "./component/RegisterScreen";
+import ReactDOM from "react-dom";
+import App from "./App";
 
-function goToRegisterScreen() {
-  return this.props.navigation.navigate(RegisterScreen);
-}
-
-class index extends React.Component {
-  render() {
-    return goToRegisterScreen();
-  }
-}
+ReactDOM.render(<App />, document.getElementById("party-plans"));
