@@ -1,14 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import App from "./App";
 
-class HelloMessage extends React.Component {
-  render() {
-    return React.createElement("div", null, "Hello ", this.props.name);
-  }
-}
-
-ReactDOM.render(
-  React.createElement(HelloMessage, { name: "Jakob" }),
-  document.getElementById("root")
-);
+ReactDOM.render(<App />, document.getElementById("party-plans"));
