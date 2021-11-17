@@ -14,6 +14,10 @@ import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 import { Link } from "react-router-dom";
 
+import { 
+  login
+} from '../api/api'
+
 const userInputProps = {
   email: "",
   password: "",
@@ -22,10 +26,15 @@ const userInputProps = {
 function onLogin() {
   var user_email = userInputProps.email.value;
   var user_password = userInputProps.password.value;
+  
   if (user_email === "" || user_password === "") {
     alert("Please fill in all required fields.");
   } else {
-    alert("Email: " + user_email + "\nPassword: " + user_password);
+    login(user_email, user_password).then((data) => {
+      let user_id = data.email;
+      alert("Email: " + user_id + "\nPassword: " + user_password);
+    })
+
   }
 }
 
