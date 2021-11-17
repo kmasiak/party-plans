@@ -4,8 +4,10 @@ import RegisterScreen from "./component/RegisterScreen";
 import LoginScreen from "./component/LoginScreen";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+
+
 class App extends Component {
-  render() {
+    render() {
     return (
       <Router>
         <Routes>

@@ -14,6 +14,10 @@ import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 import { Link } from "react-router-dom";
 
+import {
+  register
+} from '../api/api'
+
 const userInputProps = {
   fname: "",
   lname: "",
@@ -34,16 +38,16 @@ function onRegisterUser() {
   ) {
     alert("Please fill in all required fields.");
   } else {
-    alert(
-      "First Name: " +
-        user_f_name +
-        " \nLast Name: " +
-        user_l_name +
-        "\nEmail: " +
-        user_email +
-        "\nPassword: " +
-        user_password
-    );
+    register(user_email, user_f_name, user_l_name, user_password).then((data) => {
+      if(!data) {
+        alert("User already exists with email: " + user_email)
+      } else {
+        alert(
+          data
+        );
+      }
+    })
+    
   }
 }
 
