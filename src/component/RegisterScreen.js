@@ -12,7 +12,7 @@ import {
 import PartyPlans from "../images/party-plans.png";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   register
@@ -29,9 +29,9 @@ const userInputProps = {
 
 export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
-  const [registered, setRegistered] = useState(null);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
+  const navigate = useNavigate();
 
   function onRegisterUser() {
     var user_f_name = userInputProps.fname.value;
@@ -48,12 +48,9 @@ export default function RegisterScreen() {
     } else {
       register(user_email, user_f_name, user_l_name, user_password).then((data) => {
         if(!data) {
-          setRegistered(data); 
-          console.log("if", {registered, data}) 
           alert("User already exists with email: " + user_email)
         } else {
-          setRegistered(data);
-          console.log("else", {registered, data})
+          navigate('/');
         }
       })
       
@@ -147,12 +144,6 @@ export default function RegisterScreen() {
           variant="contained"
           style={{ backgroundColor: "#DC143C", color: "white" }}
           onClick={() => onRegisterUser()}
-          component={Link} 
-          to={
-            registered 
-            ? '/'
-            : '/register'
-          }
         >
           Register
         </Button>
