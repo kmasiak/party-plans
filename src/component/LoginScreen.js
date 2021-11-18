@@ -12,7 +12,7 @@ import {
 import PartyPlans from "../images/party-plans.png";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { 
   login
@@ -23,25 +23,31 @@ const userInputProps = {
   password: "",
 };
 
-function onLogin() {
-  var user_email = userInputProps.email.value;
-  var user_password = userInputProps.password.value;
-  
-  if (user_email === "" || user_password === "") {
-    alert("Please fill in all required fields.");
-  } else {
-    login(user_email, user_password).then((data) => {
-      let user_id = data.email;
-      alert("Email: " + user_id + "\nPassword: " + user_password);
-    })
-
-  }
-}
-
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
+  const navigate = useNavigate();
+
+  function onLogin() {
+    var user_email = userInputProps.email.value;
+    var user_password = userInputProps.password.value;
+    
+    if (user_email === "" || user_password === "") {
+      alert("Please fill in all required fields.");
+    } else {
+      login(user_email, user_password).then((data) => {
+        if (data.email === undefined) {
+          alert("Incorrect email or password");
+        } else {
+          navigate('/home', { state:{email:data.email,name:data.fname} });
+        }
+        
+      })
+  
+    }
+  }
+
   return (
     <Container maxWidth="sm">
       <img className="img" src={PartyPlans} alt="Party Plans Logo" />
