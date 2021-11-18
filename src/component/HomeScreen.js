@@ -6,6 +6,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EventIcon from "@material-ui/icons/Event";
 import LinkIcon from "@material-ui/icons/Link";
 import ListIcon from "@material-ui/icons/List";
+import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
 
@@ -111,7 +112,7 @@ export default function HomeScreen() {
             height: "0%",
           }}
           variant="contained"
-          endIcon={<EventIcon />}
+          endIcon={<LogoutIcon />}
         >
           Logout
         </Button>
