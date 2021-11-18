@@ -5,7 +5,7 @@ from requests import get
 from flask_cors import CORS
 import hashlib
 
-partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner', connection_timeout=300)
 
 cur = partydb.cursor(dictionary=True)
 

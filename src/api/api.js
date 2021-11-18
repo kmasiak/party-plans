@@ -34,7 +34,7 @@ export const login = async (user_email, user_password) => {
           password: user_password
         })
       })
-      
+
       const data = response.ok
       return data
     } catch (err) {
