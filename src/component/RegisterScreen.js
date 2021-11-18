@@ -12,7 +12,7 @@ import {
 import PartyPlans from "../images/party-plans.png";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import {
   register
@@ -25,36 +25,41 @@ const userInputProps = {
   password: "",
 };
 
-function onRegisterUser() {
-  var user_f_name = userInputProps.fname.value;
-  var user_l_name = userInputProps.lname.value;
-  var user_email = userInputProps.email.value;
-  var user_password = userInputProps.password.value;
-  if (
-    user_f_name === "" ||
-    user_l_name === "" ||
-    user_email === "" ||
-    user_password === ""
-  ) {
-    alert("Please fill in all required fields.");
-  } else {
-    register(user_email, user_f_name, user_l_name, user_password).then((data) => {
-      if(!data) {
-        alert("User already exists with email: " + user_email)
-      } else {
-        alert(
-          data
-        );
-      }
-    })
-    
-  }
-}
+
 
 export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
+  const [registered, setRegistered] = useState(null);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
+
+  function onRegisterUser() {
+    var user_f_name = userInputProps.fname.value;
+    var user_l_name = userInputProps.lname.value;
+    var user_email = userInputProps.email.value;
+    var user_password = userInputProps.password.value;
+    if (
+      user_f_name === "" ||
+      user_l_name === "" ||
+      user_email === "" ||
+      user_password === ""
+    ) {
+      alert("Please fill in all required fields.");
+    } else {
+      register(user_email, user_f_name, user_l_name, user_password).then((data) => {
+        if(!data) {
+          setRegistered(data); 
+          console.log("if", {registered, data}) 
+          alert("User already exists with email: " + user_email)
+        } else {
+          setRegistered(data);
+          console.log("else", {registered, data})
+        }
+      })
+      
+    }
+  }
+
   return (
     <Container maxWidth="sm">
       <img
@@ -142,6 +147,12 @@ export default function RegisterScreen() {
           variant="contained"
           style={{ backgroundColor: "#DC143C", color: "white" }}
           onClick={() => onRegisterUser()}
+          component={Link} 
+          to={
+            registered 
+            ? '/'
+            : '/register'
+          }
         >
           Register
         </Button>
