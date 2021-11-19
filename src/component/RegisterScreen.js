@@ -12,7 +12,7 @@ import {
 import PartyPlans from "../images/party-plans.png";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
   register
@@ -31,7 +31,7 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
-  const navigate = useNavigate();
+
 
   function onRegisterUser() {
     var user_f_name = userInputProps.fname.value;
@@ -50,7 +50,7 @@ export default function RegisterScreen() {
         if(!data) {
           alert("User already exists with email: " + user_email)
         } else {
-          navigate('/');
+          
         }
       })
       

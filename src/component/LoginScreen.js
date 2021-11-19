@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 import "../css/LoginScreen.css";
 
 import {
@@ -12,40 +12,25 @@ import {
 import PartyPlans from "../images/party-plans.png";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
-import { 
-  login
-} from '../api/api'
+class LoginScreen extends Component {
+  render() {
 
-const userInputProps = {
-  email: "",
-  password: "",
-};
+  const { 
+    showPassword,
+    setShowPassword,
+    handleEmail, // get props passed from App.js
+    handlePass,
+    logged_in,
+    login_err,
+    onLogin,
+    is_admin,
+    is_user
+  } = this.props
 
-export default function LoginScreen() {
-  const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleMouseDownPassword = () => setShowPassword(!showPassword);
-  const navigate = useNavigate();
-
-  function onLogin() {
-    var user_email = userInputProps.email.value;
-    var user_password = userInputProps.password.value;
-    
-    if (user_email === "" || user_password === "") {
-      alert("Please fill in all required fields.");
-    } else {
-      login(user_email, user_password).then((data) => {
-        if (data.email === undefined) {
-          alert("Incorrect email or password");
-        } else {
-          navigate('/home', { state:{email:data.email,name:data.fname} });
-        }
-        
-      })
-  
-    }
+  if (logged_in) {
+    return <Redirect to='/home' />
   }
 
   return (
@@ -62,10 +47,8 @@ export default function LoginScreen() {
           variant="outlined"
           props="required"
           margin="normal"
-          inputRef={(ref) => {
-            userInputProps.email = ref;
-          }}
           inputProps={{ maxLength: 45 }}
+          onChange={handleEmail}
         />
         <TextField
           required
@@ -75,30 +58,30 @@ export default function LoginScreen() {
           label="Password"
           variant="outlined"
           margin="normal"
-          inputRef={(ref) => {
-            userInputProps.password = ref;
-          }}
           inputProps={{ maxLength: 45 }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
+                  onClick={() => setShowPassword(showPassword)}
+                  onMouseDown={() => setShowPassword(showPassword)}
                 >
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             ),
           }}
+          onChange={handlePass}
         />
         <br />
         <Button
           id="loginBtn"
           style={{ backgroundColor: "#dc143c", color: "white" }}
           variant="contained"
-          onClick={() => onLogin()}
+          onClick={onLogin}
+          // component={Link} 
+          // to={{logged_in} ? '/home' : '/'}
         >
           Login
         </Button>
@@ -108,5 +91,8 @@ export default function LoginScreen() {
         </Button>
       </FormGroup>
     </Container>
-  );
+    )
+  }
 }
+
+export default LoginScreen
