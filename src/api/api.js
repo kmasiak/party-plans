@@ -63,3 +63,25 @@ export const login = async (user_email, user_password) => {
       return err
     }
   }
+
+  export const add_friend = async (user_email, friend_email) => {
+    try {
+      const response = await fetch('http://localhost:5000/party/add-friend', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          my_id: user_email,
+          id: friend_email
+        })
+      })
+
+      const data = await response.json()
+      return data
+    } catch (err) {
+      console.log("ERR ", err)
+      return err
+    }
+  }

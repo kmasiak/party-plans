@@ -9,6 +9,7 @@ import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
+import TextField from '@mui/material/TextField';
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -20,30 +21,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 import { Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/styles";
-
-
-
-function createListData(listName) {
-  return { listName };
-}
-
-function createPartyData(movieName, date) {
-  return { movieName, date };
-}
-
-
-
-const rowsListTable = [
-  createListData("Scary Movies"),
-  createListData("Christmas Movies"),
-  createListData("All-Time Greats"),
-  createListData("Childhood Favorites"),
-];
-
-const rowsPartyTable = [createPartyData("Shrek", "11/13/21 7:00PM")];
-
 
 class HomeScreen extends Component {
   render() {
@@ -53,7 +38,12 @@ class HomeScreen extends Component {
       lists,
       first_name,
       logged_in,
-      onLogout
+      onLogout,
+      collection_open,
+      friend_open,
+      setShowPassword,
+      handleFemail,
+      onAddFriend
     } = this.props
 
     if (!logged_in) {
@@ -81,9 +71,30 @@ class HomeScreen extends Component {
             }}
             variant="contained"
             endIcon={<PersonAddIcon />}
+            onClick={() => setShowPassword(friend_open, 'fo')}
           >
             Add Friend
           </Button>
+          <Dialog open={friend_open} onClose={() => setShowPassword(friend_open, 'fo')}>
+            <DialogTitle>Add a Friend</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Friend Email"
+                type="email"
+                fullWidth
+                variant="standard"
+                inputProps={{ maxLength: 45 }}
+                onChange={handleFemail}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setShowPassword(friend_open, 'fo')}>Cancel</Button>
+              <Button onClick={onAddFriend}>Submit</Button>
+            </DialogActions>
+          </Dialog>
           <Button
             style={{
               backgroundColor: "#dc143c",
@@ -95,9 +106,29 @@ class HomeScreen extends Component {
             }}
             variant="contained"
             endIcon={<ListIcon />}
+            onClick={() => setShowPassword(collection_open, 'co')}
           >
             Create List
           </Button>
+          <Dialog open={collection_open} onClose={() => setShowPassword(collection_open, 'co')}>
+            <DialogTitle>Create a Collection</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Collection Name"
+                type="text"
+                fullWidth
+                variant="standard"
+                inputProps={{ maxLength: 45 }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setShowPassword(collection_open, 'co')}>Cancel</Button>
+              <Button onClick={() => setShowPassword(collection_open, 'co')}>Submit</Button>
+            </DialogActions>
+          </Dialog>
           <Button
             style={{
               backgroundColor: "#dc143c",
@@ -121,7 +152,7 @@ class HomeScreen extends Component {
               height: "0%",
             }}
             variant="contained"
-            endIcon={<EventIcon />}
+            endIcon={<LogoutIcon />}
             onClick={onLogout}
           >
             Logout
