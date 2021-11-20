@@ -43,9 +43,9 @@ export const login = async (user_email, user_password) => {
     }
   }
 
-  export const friends = async (user_email) => {
+  export const home = async (user_email) => {
     try {
-      const response = await fetch('http://localhost:5000/party/get-friends', {
+      const response = await fetch('http://localhost:5000/party/get-home', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

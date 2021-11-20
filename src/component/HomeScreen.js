@@ -19,7 +19,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/styles";
 
 
@@ -46,18 +46,26 @@ const rowsPartyTable = [createPartyData("Shrek", "11/13/21 7:00PM")];
 
 class HomeScreen extends Component {
   render() {
-
     const { 
-      friends
+      friends,
+      parties,
+      lists,
+      first_name,
+      logged_in,
+      onLogout
     } = this.props
+
+    if (!logged_in) {
+      return <Redirect to='/'/>
+    }
 
     return (
       <div>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <img className="img2" src={PartyPlans} alt="Party Plans Logo" />
 
-          <h1 style={{ marginTop: "auto", marginBottom: "auto" }}>
-            Welcome, 
+          <h1 style={{ marginTop: "auto", marginBottom: "auto" }} className="h1">
+            Welcome, {first_name}
           </h1>
 
           <Button
@@ -113,6 +121,7 @@ class HomeScreen extends Component {
             }}
             variant="contained"
             endIcon={<EventIcon />}
+            onClick={onLogout}
           >
             Logout
           </Button>
@@ -143,9 +152,9 @@ class HomeScreen extends Component {
                       style={{ backgroundColor: "#f5f5f5" }}
                     >
                       <TableCell component="th" scope="row">
-                        {row[0]}
+                        {row.f_name}
                       </TableCell>
-                      <TableCell align="left">{row[1]}</TableCell>
+                      <TableCell align="left">{row.l_name}</TableCell>
                       <TableCell align="center">
                         <Button
                           variant="contained"
@@ -177,13 +186,13 @@ class HomeScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rowsListTable.map((row) => (
+                  {lists.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       style={{ backgroundColor: "#f5f5f5" }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.listName}
+                        {row.list_name}
                       </TableCell>
                       <TableCell align="center">
                         <Button
@@ -230,20 +239,21 @@ class HomeScreen extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rowsPartyTable.map((row) => (
+              {parties.map((row) => (
                 <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   style={{ backgroundColor: "#f5f5f5" }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.movieName}
+                    {row.title}
                   </TableCell>
-                  <TableCell align="left">{row.date}</TableCell>
+                  <TableCell align="left">{row.time}</TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"
                       style={{ backgroundColor: "#dc143c", color: "white" }}
                       endIcon={<LinkIcon />}
+                      onClick={() => window.open(row.url)}
                     >
                       Link
                     </Button>

@@ -20,13 +20,10 @@ class LoginScreen extends Component {
   const { 
     showPassword,
     setShowPassword,
-    handleEmail, // get props passed from App.js
+    handleEmail, 
     handlePass,
     logged_in,
-    login_err,
     onLogin,
-    is_admin,
-    is_user
   } = this.props
 
   if (logged_in) {
@@ -80,8 +77,6 @@ class LoginScreen extends Component {
           style={{ backgroundColor: "#dc143c", color: "white" }}
           variant="contained"
           onClick={onLogin}
-          // component={Link} 
-          // to={{logged_in} ? '/home' : '/'}
         >
           Login
         </Button>
