@@ -52,8 +52,8 @@ def register():
 
     return cur.callproc('user_register', [email, first_name, last_name, password])
 
-@app.route('/party/get-friends', methods=['POST']) # POST request since we are sending a request body
-def get_friends():
+@app.route('/party/get-home', methods=['POST']) 
+def get_home():
 
     partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
     partydb.autocommit = True
@@ -61,19 +61,30 @@ def get_friends():
 
     email = request.json.get('email')
 
-    friends = []
+    friends, parties, collections = [], [], []
 
-    # call the transactionHistory procedure with user ID and account number
     cur.callproc('get_followed', [email])
 
-    # iterate through the result set
     for set in cur.stored_results():
         for row in set:
-            friends.append(dict(zip(set.column_names,row))) # append each row to an array
+            friends.append(dict(zip(set.column_names,row))) 
     
-    # jsonify the result so the frontend will accept it
+    cur.callproc('get_parties', [email])
+
+    for set in cur.stored_results():
+        for row in set:
+            parties.append(dict(zip(set.column_names,row))) 
+
+    cur.callproc('get_lists', [email])
+
+    for set in cur.stored_results():
+        for row in set:
+            collections.append(dict(zip(set.column_names,row))) 
+
     return jsonify({
-        'friends': friends
+        'friends': friends,
+        'parties': parties,
+        'collections': collections
     })
 
 
