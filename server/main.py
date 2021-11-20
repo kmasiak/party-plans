@@ -87,6 +87,18 @@ def get_home():
         'collections': collections
     })
 
+@app.route('/party/add-friend', methods=['POST'])
+def add_friend():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    my_id = request.json.get('my_id')
+    friend_id = request.json.get('id')
+
+    return cur.callproc('follow', [my_id, friend_id])
+
 
 @app.route('/health-check', methods=['GET'])
 def heatlhcheck():

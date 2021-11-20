@@ -11,7 +11,8 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import { 
   home,
   login,
-  register
+  register, 
+  add_friend
 } from './api/api'
 
 class App extends Component {
@@ -25,7 +26,10 @@ class App extends Component {
     password: '',
     first_name: '',
     last_name: '',
-    
+    collection_name: '',
+    collection_open: false,
+    friend_email: '',
+    friend_open: false
   }
 
   handleEmail = (event) =>  {
@@ -44,8 +48,22 @@ class App extends Component {
     this.setState({ last_name: event.target.value })
   }
 
-  setShowPassword = (showPassword) => {
-    this.setState({ showPassword: !showPassword})
+  handleFemail = (event) => {
+    console.log(this.state.friend_email)
+    this.setState({ friend_email: event.target.value })
+  }
+
+  setShowPassword = (bool_val, name) => {
+    if (name === 'co') {
+      this.setState({ collection_open: !bool_val})
+    } else if (name === 'fo') {
+      this.setState({ friend_open: !bool_val})
+    } else if (name === 'po') {
+      this.setState({ party_open: !bool_val})
+    } else {
+      this.setState({ showPassword: !bool_val})
+    }
+    
   }
 
   makeUserTables = () => {
@@ -116,6 +134,24 @@ class App extends Component {
     })
   }
 
+  onAddFriend = () => {
+    const user_id = this.state.email;
+    const friend_id = this.state.friend_email;
+
+    if (user_id === "" || friend_id === "") {
+      alert("Please fill in all required fields.");
+    } else {
+      add_friend(user_id, friend_id).then((data) => {
+        if (data.response === 500) {
+          alert("Invalid email");
+        } else {
+          alert("Friend added!");
+        }
+      })
+  
+    }
+  }
+
   render() {
     const {
       friends,
@@ -125,7 +161,11 @@ class App extends Component {
       logged_in,
       email, 
       password,
-      first_name
+      first_name,
+      collection_name,
+      collection_open,
+      friend_email,
+      friend_open
     } = this.state
 
     
@@ -159,13 +199,26 @@ class App extends Component {
             first_name={first_name}
             logged_in={logged_in}
             onLogout={this.onLogout}
+            collection_name={collection_name}
+            collection_open={collection_open}
+            friend_email={friend_email}
+            friend_open={friend_open}
+            onAddFriend={this.onAddFriend}
+            handleFemail={this.handleFemail}
+            setShowPassword={this.setShowPassword}
             />)} />
-          <Route
-            path="/create-collection"
-            element={<CreateCollectionScreen />}
+          {/* <Route exact path="/create-collection" render={() => (<CreateCollectionScreen 
+            
+            />)}
           />
-          <Route path="/create-party" element={<CreatePartyScreen />} />
-          <Route path="/create-review" element={<CreateReviewScreen />} />
+          <Route exact path="/create-party" render={() => (<CreatePartyScreen 
+            
+            />)}
+          />
+          <Route exact path="/create-review" render={() => (<CreateReviewScreen 
+            
+            />)}
+          /> */}
         </Router>
       </div>
     );

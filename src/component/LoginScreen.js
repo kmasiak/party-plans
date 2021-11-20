@@ -39,7 +39,7 @@ class LoginScreen extends Component {
           required
           id="email"
           className="TextField"
-          type="text"
+          type="email"
           label="Email"
           variant="outlined"
           props="required"
@@ -61,8 +61,8 @@ class LoginScreen extends Component {
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={() => setShowPassword(showPassword)}
-                  onMouseDown={() => setShowPassword(showPassword)}
+                  onClick={() => setShowPassword(showPassword, '')}
+                  onMouseDown={() => setShowPassword(showPassword, '')}
                 >
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>

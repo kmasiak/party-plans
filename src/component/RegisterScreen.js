@@ -74,7 +74,7 @@ class RegisterScreen extends Component {
             required
             id="email"
             className="TextFieldReg"
-            type="text"
+            type="email"
             label="Email"
             variant="outlined"
             props="required"
@@ -96,8 +96,8 @@ class RegisterScreen extends Component {
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(showPassword)}
-                    onMouseDown={() => setShowPassword(showPassword)}
+                    onClick={() => setShowPassword(showPassword, '')}
+                    onMouseDown={() => setShowPassword(showPassword, '')}
                   >
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
