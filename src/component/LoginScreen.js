@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 import "../css/LoginScreen.css";
 
 import {
@@ -12,27 +12,24 @@ import {
 import PartyPlans from "../images/party-plans.png";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
-const userInputProps = {
-  email: "",
-  password: "",
-};
+class LoginScreen extends Component {
+  render() {
 
-function onLogin() {
-  var user_email = userInputProps.email.value;
-  var user_password = userInputProps.password.value;
-  if (user_email === "" || user_password === "") {
-    alert("Please fill in all required fields.");
-  } else {
-    alert("Email: " + user_email + "\nPassword: " + user_password);
+  const { 
+    showPassword,
+    setShowPassword,
+    handleEmail, 
+    handlePass,
+    logged_in,
+    onLogin,
+  } = this.props
+
+  if (logged_in) {
+    return <Redirect to='/home' />
   }
-}
 
-export default function LoginScreen() {
-  const [showPassword, setShowPassword] = useState(false);
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleMouseDownPassword = () => setShowPassword(!showPassword);
   return (
     <Container maxWidth="sm">
       <img className="img" src={PartyPlans} alt="Party Plans Logo" />
@@ -47,10 +44,8 @@ export default function LoginScreen() {
           variant="outlined"
           props="required"
           margin="normal"
-          inputRef={(ref) => {
-            userInputProps.email = ref;
-          }}
           inputProps={{ maxLength: 45 }}
+          onChange={handleEmail}
         />
         <TextField
           required
@@ -60,30 +55,28 @@ export default function LoginScreen() {
           label="Password"
           variant="outlined"
           margin="normal"
-          inputRef={(ref) => {
-            userInputProps.password = ref;
-          }}
           inputProps={{ maxLength: 45 }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
+                  onClick={() => setShowPassword(showPassword)}
+                  onMouseDown={() => setShowPassword(showPassword)}
                 >
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               </InputAdornment>
             ),
           }}
+          onChange={handlePass}
         />
         <br />
         <Button
           id="loginBtn"
           style={{ backgroundColor: "#dc143c", color: "white" }}
           variant="contained"
-          onClick={() => onLogin()}
+          onClick={onLogin}
         >
           Login
         </Button>
@@ -93,5 +86,8 @@ export default function LoginScreen() {
         </Button>
       </FormGroup>
     </Container>
-  );
+    )
+  }
 }
+
+export default LoginScreen
