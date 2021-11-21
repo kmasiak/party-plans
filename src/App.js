@@ -141,9 +141,11 @@ class App extends Component {
       alert("Please fill in all required fields.");
     } else {
       add_friend(user_id, friend_id).then((data) => {
-        if (data.response === 500) {
+        if (data.substring(0, 3) === 'ERR') {
           alert("Invalid email");
         } else {
+          this.setShowPassword(this.state.friend_open, "fo");
+          this.makeUserTables();
           alert("Friend added!");
         }
       });
@@ -158,13 +160,15 @@ class App extends Component {
       alert("Collection Name cannot be empty.");
     } else {
       add_collection(user_id, collectionName).then((data) => {
-        if (data.response === 500) {
+        console.log(data)
+        if (data.substring(0, 3) === 'ERR') {
           alert("Collection could not be created.");
         } else {
+          this.setShowPassword(this.state.collection_open, "co");
+          this.makeUserTables();
           alert("Collection created!");
         }
       });
-      //setShowPassword(this.state.collection_open, "co");
     }
   };
 
