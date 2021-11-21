@@ -15,7 +15,7 @@ export const login = async (user_email, user_password) => {
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return err;
+    return "ERR" + err;
   }
 };
 
@@ -44,7 +44,7 @@ export const register = async (
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return err;
+    return "ERR" + err;
   }
 };
 
@@ -65,7 +65,7 @@ export const home = async (user_email) => {
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return err;
+    return "ERR" + err;
   }
 };
 
@@ -87,7 +87,7 @@ export const add_friend = async (user_email, friend_email) => {
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return err;
+    return "ERR" + err;
   }
 };
 
@@ -109,6 +109,6 @@ export const add_collection = async (user_email, collection_name) => {
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return err;
+    return "ERR" + err;
   }
 };
