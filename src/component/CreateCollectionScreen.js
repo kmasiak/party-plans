@@ -105,8 +105,7 @@ class CreateCollectionScreen extends Component {
                   flexDirection: "row",
                 }}
               >
-                <TextField
-                  required
+                <h2
                   id="collectionName"
                   style={{
                     backgroundColor: "white",
@@ -116,14 +115,9 @@ class CreateCollectionScreen extends Component {
                     marginBottom: "auto",
                     marginRight: "auto",
                   }}
-                  type="text"
-                  label="Collection Name"
-                  props="required"
-                  inputRef={(ref) => {
-                    userInputProps.collectionName = ref;
-                  }}
-                  inputProps={{ maxLength: 45 }}
-                />
+                >
+                  Collection Name
+                </h2>
                 <Button
                   id="saveBtn"
                   style={{
@@ -222,4 +216,4 @@ class CreateCollectionScreen extends Component {
   }
 }
 
-export default CreateCollectionScreen
+export default CreateCollectionScreen;
