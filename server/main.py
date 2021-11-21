@@ -99,6 +99,17 @@ def add_friend():
 
     return cur.callproc('follow', [my_id, friend_id])
 
+@app.route('/party/add-collection', methods=['POST'])
+def add_collection():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    email = request.json.get('email')
+    collection_name = request.json.get('collection_name')
+    
+    return cur.callproc('list_create', [email, collection_name])
 
 @app.route('/health-check', methods=['GET'])
 def heatlhcheck():

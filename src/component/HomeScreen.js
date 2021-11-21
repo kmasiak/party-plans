@@ -9,7 +9,7 @@ import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
-import TextField from '@mui/material/TextField';
+import TextField from "@mui/material/TextField";
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -21,21 +21,21 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 import { Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/styles";
 
 class HomeScreen extends Component {
   render() {
-    const { 
+    const {
       friends,
       parties,
-      lists,
+      collections,
       first_name,
       logged_in,
       onLogout,
@@ -43,11 +43,13 @@ class HomeScreen extends Component {
       friend_open,
       setShowPassword,
       handleFemail,
-      onAddFriend
-    } = this.props
+      onAddFriend,
+      onAddCollection,
+      handleCollectionName,
+    } = this.props;
 
     if (!logged_in) {
-      return <Redirect to='/'/>
+      return <Redirect to="/" />;
     }
 
     return (
@@ -55,7 +57,10 @@ class HomeScreen extends Component {
         <div style={{ display: "flex", flexDirection: "row" }}>
           <img className="img2" src={PartyPlans} alt="Party Plans Logo" />
 
-          <h1 style={{ marginTop: "auto", marginBottom: "auto" }} className="h1">
+          <h1
+            style={{ marginTop: "auto", marginBottom: "auto" }}
+            className="h1"
+          >
             Welcome, {first_name}
           </h1>
 
@@ -71,11 +76,14 @@ class HomeScreen extends Component {
             }}
             variant="contained"
             endIcon={<PersonAddIcon />}
-            onClick={() => setShowPassword(friend_open, 'fo')}
+            onClick={() => setShowPassword(friend_open, "fo")}
           >
             Add Friend
           </Button>
-          <Dialog open={friend_open} onClose={() => setShowPassword(friend_open, 'fo')}>
+          <Dialog
+            open={friend_open}
+            onClose={() => setShowPassword(friend_open, "fo")}
+          >
             <DialogTitle>Add a Friend</DialogTitle>
             <DialogContent>
               <TextField
@@ -91,7 +99,9 @@ class HomeScreen extends Component {
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setShowPassword(friend_open, 'fo')}>Cancel</Button>
+              <Button onClick={() => setShowPassword(friend_open, "fo")}>
+                Cancel
+              </Button>
               <Button onClick={onAddFriend}>Submit</Button>
             </DialogActions>
           </Dialog>
@@ -106,11 +116,14 @@ class HomeScreen extends Component {
             }}
             variant="contained"
             endIcon={<ListIcon />}
-            onClick={() => setShowPassword(collection_open, 'co')}
+            onClick={() => setShowPassword(collection_open, "co")}
           >
-            Create List
+            Create Collection
           </Button>
-          <Dialog open={collection_open} onClose={() => setShowPassword(collection_open, 'co')}>
+          <Dialog
+            open={collection_open}
+            onClose={() => setShowPassword(collection_open, "co")}
+          >
             <DialogTitle>Create a Collection</DialogTitle>
             <DialogContent>
               <TextField
@@ -122,11 +135,14 @@ class HomeScreen extends Component {
                 fullWidth
                 variant="standard"
                 inputProps={{ maxLength: 45 }}
+                onChange={handleCollectionName}
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setShowPassword(collection_open, 'co')}>Cancel</Button>
-              <Button onClick={() => setShowPassword(collection_open, 'co')}>Submit</Button>
+              <Button onClick={() => setShowPassword(collection_open, "co")}>
+                Cancel
+              </Button>
+              <Button onClick={onAddCollection}>Submit</Button>
             </DialogActions>
           </Dialog>
           <Button
@@ -193,7 +209,7 @@ class HomeScreen extends Component {
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
                         >
-                          View Lists
+                          View Collections
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -211,14 +227,14 @@ class HomeScreen extends Component {
                 <TableHead>
                   <TableRow style={{ backgroundColor: "#dc143c" }}>
                     <TableCell align="left" style={{ color: "white" }}>
-                      My Lists
+                      My Collections
                     </TableCell>
                     <TableCell />
                     <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {lists.map((row) => (
+                  {collections.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       style={{ backgroundColor: "#f5f5f5" }}
@@ -317,5 +333,5 @@ class HomeScreen extends Component {
     );
   }
 }
-  
-export default HomeScreen
+
+export default HomeScreen;
