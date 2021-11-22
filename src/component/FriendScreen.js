@@ -26,14 +26,17 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 
 class FriendScreen extends Component {
   render() {
     const {
       logged_in,
       onLogout,
-      friend_first_name
+      friend_first_name,
+      f_friends,
+      f_collections,
+      onAddFriend
     } = this.props;
 
     if (!logged_in) {
@@ -43,13 +46,15 @@ class FriendScreen extends Component {
     return (
       <div>
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <img className="img2" src={PartyPlans} alt="Party Plans Logo" />
+        <Link to='/home'>
+          <img className="img2" src={PartyPlans} alt="Party Plans Logo"/>
+        </Link>
 
           <h1
-            style={{ marginTop: "auto", marginBottom: "auto" }}
+            style={{ marginTop: "auto", marginBottom: "auto", marginRight: "auto"}}
             className="h1"
           >
-            {friend_first_name}'s Collections
+            {friend_first_name}'s Profile
           </h1>
 
           <Button
@@ -86,7 +91,7 @@ class FriendScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {friends.map((row) => (
+                  {f_friends.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       style={{ backgroundColor: "#f5f5f5" }}
@@ -100,6 +105,7 @@ class FriendScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<PersonAddIcon />}
+                          onClick={() => onAddFriend(row.email)}
                         >
                           Add
                         </Button>
@@ -125,7 +131,7 @@ class FriendScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {collections.map((row) => (
+                  {f_collections.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       style={{ backgroundColor: "#f5f5f5" }}
