@@ -15,7 +15,7 @@ export const login = async (user_email, user_password) => {
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return "ERR" + err;
+    return "ERR " + err;
   }
 };
 
@@ -44,7 +44,7 @@ export const register = async (
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return "ERR" + err;
+    return "ERR " + err;
   }
 };
 
@@ -65,7 +65,7 @@ export const home = async (user_email) => {
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return "ERR" + err;
+    return "ERR " + err;
   }
 };
 
@@ -82,12 +82,32 @@ export const add_friend = async (user_email, friend_email) => {
         id: friend_email,
       }),
     });
-
     const data = await response.json();
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return "ERR" + err;
+    return "ERR " + err;
+  }
+};
+
+export const del_friend = async (user_email, friend_email) => {
+  try {
+    const response = await fetch("http://localhost:5000/party/delete-friend", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        my_id: user_email,
+        id: friend_email,
+      }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
   }
 };
 
@@ -109,6 +129,6 @@ export const add_collection = async (user_email, collection_name) => {
     return data;
   } catch (err) {
     console.log("ERR ", err);
-    return "ERR" + err;
+    return "ERR " + err;
   }
 };
