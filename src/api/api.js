@@ -132,3 +132,26 @@ export const add_collection = async (user_email, collection_name) => {
     return "ERR " + err;
   }
 };
+
+export const del_collection = async (collection_id) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/delete-collection",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          collection_id: collection_id,
+        }),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
