@@ -8,7 +8,7 @@ import LoginScreen from "./component/LoginScreen";
 import RegisterScreen from "./component/RegisterScreen";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import { home, login, register, add_friend, add_collection } from "./api/api";
+import { home, login, register, add_friend, add_collection, del_friend } from "./api/api";
 
 class App extends Component {
   state = {
@@ -25,6 +25,7 @@ class App extends Component {
     collection_open: false,
     friend_email: "",
     friend_open: false,
+    fd_open: false
   };
 
   handleEmail = (event) => {
@@ -58,6 +59,8 @@ class App extends Component {
       this.setState({ collection_open: !bool_val });
     } else if (name === "fo") {
       this.setState({ friend_open: !bool_val });
+    } else if (name === "fd") {
+      this.setState({ fd_open: !bool_val });
     } else if (name === "po") {
       this.setState({ party_open: !bool_val });
     } else {
@@ -65,8 +68,7 @@ class App extends Component {
     }
   };
 
-  makeUserTables = () => {
-    const uemail = this.state.email;
+  makeUserTables = (uemail) => {
 
     home(uemail).then((data) => {
       console.log(data.parties);
@@ -114,7 +116,7 @@ class App extends Component {
         if (data.email === "") {
           alert("Incorrect email or password");
         } else {
-          this.makeUserTables();
+          this.makeUserTables(user_email);
 
           this.setState({
             logged_in: true,
@@ -141,11 +143,11 @@ class App extends Component {
       alert("Please fill in all required fields.");
     } else {
       add_friend(user_id, friend_id).then((data) => {
-        if (data.substring(0, 3) === 'ERR') {
+        if (data.toString().substring(0, 3) === 'ERR') {
           alert("Invalid email");
         } else {
           this.setShowPassword(this.state.friend_open, "fo");
-          this.makeUserTables();
+          this.makeUserTables(user_id);
           alert("Friend added!");
         }
       });
@@ -161,15 +163,38 @@ class App extends Component {
     } else {
       add_collection(user_id, collectionName).then((data) => {
         console.log(data)
-        if (data.substring(0, 3) === 'ERR') {
-          alert("Collection could not be created.");
+        if (data.toString().substring(0, 3) === 'ERR') {
+          alert("You already have a collection with that name.");
         } else {
           this.setShowPassword(this.state.collection_open, "co");
-          this.makeUserTables();
+          this.makeUserTables(user_id);
           alert("Collection created!");
         }
       });
     }
+  };
+
+  onRemoveFriend = (f_email) => {
+    const user_id = this.state.email;
+    var r = window.confirm("Delete friend with email: " + f_email + "?");
+
+    if (r) {
+      del_friend(user_id, f_email).then((data) => {
+        if (data.toString().substring(0, 3) === 'ERR') {
+          alert("Invalid email");
+        } else {
+          this.setShowPassword(this.state.fd_open, "fd");
+          this.makeUserTables();
+          alert("Friend deleted!");
+        }
+      });
+    } else {
+      alert("Delete Cancelled!");
+    }
+  };
+
+  onViewFriend = (f_email) => {
+
   };
 
   render() {
@@ -186,6 +211,7 @@ class App extends Component {
       collection_open,
       friend_email,
       friend_open,
+      fd_open
     } = this.state;
 
     return (
@@ -242,6 +268,9 @@ class App extends Component {
                 onAddFriend={this.onAddFriend}
                 handleFemail={this.handleFemail}
                 setShowPassword={this.setShowPassword}
+                fd_open={fd_open}
+                onRemoveFriend={this.onRemoveFriend}
+                onViewFriend={this.onViewFriend}
               />
             )}
           />

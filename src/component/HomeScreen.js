@@ -24,11 +24,9 @@ import Paper from "@mui/material/Paper";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { Redirect } from "react-router-dom";
-import { withStyles } from "@material-ui/styles";
 
 class HomeScreen extends Component {
   render() {
@@ -46,6 +44,8 @@ class HomeScreen extends Component {
       onAddFriend,
       onAddCollection,
       handleCollectionName,
+      onRemoveFriend,
+      onViewFriend
     } = this.props;
 
     if (!logged_in) {
@@ -191,6 +191,7 @@ class HomeScreen extends Component {
                       Last Name
                     </TableCell>
                     <TableCell />
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -208,8 +209,19 @@ class HomeScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
+                          onClick={() => onViewFriend(row.email)}
                         >
-                          View Collections
+                          View Profile
+                        </Button>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          variant="contained"
+                          style={{ backgroundColor: "#dc143c", color: "white" }}
+                          endIcon={<DeleteIcon />}
+                          onClick={() => onRemoveFriend(row.email)}
+                        >
+                          Delete
                         </Button>
                       </TableCell>
                     </TableRow>
