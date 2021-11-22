@@ -123,6 +123,18 @@ def del_friend():
     
     return cur.callproc('unfollow', [my_id, friend_id])
 
+@app.route('/party/delete-collection', methods=['POST'])
+def del_collection():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('collection_id')
+    
+    return cur.callproc('list_delete', [list_id])
+
+
 @app.route('/health-check', methods=['GET'])
 def heatlhcheck():
     return 'REEEEEEEE'

@@ -8,7 +8,15 @@ import LoginScreen from "./component/LoginScreen";
 import RegisterScreen from "./component/RegisterScreen";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import { home, login, register, add_friend, add_collection, del_friend } from "./api/api";
+import {
+  home,
+  login,
+  register,
+  add_friend,
+  add_collection,
+  del_friend,
+  del_collection,
+} from "./api/api";
 
 class App extends Component {
   state = {
@@ -25,7 +33,7 @@ class App extends Component {
     collection_open: false,
     friend_email: "",
     friend_open: false,
-    fd_open: false
+    fd_open: false,
   };
 
   handleEmail = (event) => {
@@ -69,7 +77,6 @@ class App extends Component {
   };
 
   makeUserTables = (uemail) => {
-
     home(uemail).then((data) => {
       console.log(data.parties);
       this.setState({
@@ -79,6 +86,8 @@ class App extends Component {
       });
     });
   };
+
+  makeCollectionTables = () => {};
 
   onRegisterUser = () => {
     const user_f_name = this.state.first_name;
@@ -143,7 +152,7 @@ class App extends Component {
       alert("Please fill in all required fields.");
     } else {
       add_friend(user_id, friend_id).then((data) => {
-        if (data.toString().substring(0, 3) === 'ERR') {
+        if (data.toString().substring(0, 3) === "ERR") {
           alert("Invalid email");
         } else {
           this.setShowPassword(this.state.friend_open, "fo");
@@ -162,8 +171,8 @@ class App extends Component {
       alert("Collection Name cannot be empty.");
     } else {
       add_collection(user_id, collectionName).then((data) => {
-        console.log(data)
-        if (data.toString().substring(0, 3) === 'ERR') {
+        console.log(data);
+        if (data.toString().substring(0, 3) === "ERR") {
           alert("You already have a collection with that name.");
         } else {
           this.setShowPassword(this.state.collection_open, "co");
@@ -180,7 +189,7 @@ class App extends Component {
 
     if (r) {
       del_friend(user_id, f_email).then((data) => {
-        if (data.toString().substring(0, 3) === 'ERR') {
+        if (data.toString().substring(0, 3) === "ERR") {
           alert("Invalid email");
         } else {
           this.setShowPassword(this.state.fd_open, "fd");
@@ -193,9 +202,28 @@ class App extends Component {
     }
   };
 
-  onViewFriend = (f_email) => {
+  onRemoveCollection = (list_id, collection_name) => {
+    const collection_id = list_id;
+    var r = window.confirm(
+      "Delete collection with name: " + collection_name + "?"
+    );
 
+    if (r) {
+      del_collection(collection_id).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Collection could not be deleted.");
+        } else {
+          this.setShowPassword(this.state.fd_open, "fd");
+          //this.makeCollectionTables();
+          alert("Collection deleted!");
+        }
+      });
+    } else {
+      alert("Delete Cancelled!");
+    }
   };
+
+  onViewFriend = (f_email) => {};
 
   render() {
     const {
@@ -211,7 +239,7 @@ class App extends Component {
       collection_open,
       friend_email,
       friend_open,
-      fd_open
+      fd_open,
     } = this.state;
 
     return (
@@ -263,6 +291,7 @@ class App extends Component {
                 collection_open={collection_open}
                 handleCollectionName={this.handleCollectionName}
                 onAddCollection={this.onAddCollection}
+                onRemoveCollection={this.onRemoveCollection}
                 friend_email={friend_email}
                 friend_open={friend_open}
                 onAddFriend={this.onAddFriend}

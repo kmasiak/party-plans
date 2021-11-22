@@ -45,7 +45,8 @@ class HomeScreen extends Component {
       onAddCollection,
       handleCollectionName,
       onRemoveFriend,
-      onViewFriend
+      onRemoveCollection,
+      onViewFriend,
     } = this.props;
 
     if (!logged_in) {
@@ -268,6 +269,9 @@ class HomeScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<DeleteIcon />}
+                          onClick={() =>
+                            onRemoveCollection(row.list_id, row.list_name)
+                          }
                         >
                           Delete
                         </Button>
