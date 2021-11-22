@@ -6,15 +6,20 @@ import CreateReviewScreen from "./component/CreateReviewScreen";
 import HomeScreen from "./component/HomeScreen";
 import LoginScreen from "./component/LoginScreen";
 import RegisterScreen from "./component/RegisterScreen";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import FriendScreen from "./component/FriendScreen";
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 
 import { home, login, register, add_friend, add_collection, del_friend } from "./api/api";
+
 
 class App extends Component {
   state = {
     friends: [],
     parties: [],
     collections: [],
+    f_friends: [],
+    f_collections: [],
+    friend_first_name: "",
     showPassword: false,
     logged_in: false,
     email: "",
@@ -69,15 +74,25 @@ class App extends Component {
   };
 
   makeUserTables = (uemail) => {
-
-    home(uemail).then((data) => {
-      console.log(data.parties);
-      this.setState({
-        friends: data.friends,
-        parties: data.parties,
-        collections: data.collections,
+    if (uemail == this.state.email) {
+      home(uemail).then((data) => {
+        console.log(data.parties);
+        this.setState({
+          friends: data.friends,
+          parties: data.parties,
+          collections: data.collections,
+        });
       });
-    });
+    } else {
+      home(uemail).then((data) => {
+        console.log(data.parties);
+        this.setState({
+          f_friends: data.friends,
+          f_collections: data.collections,
+        });
+      });
+    }
+    
   };
 
   onRegisterUser = () => {
@@ -135,18 +150,19 @@ class App extends Component {
     });
   };
 
-  onAddFriend = () => {
+  onAddFriend = (f_email) => {
     const user_id = this.state.email;
-    const friend_id = this.state.friend_email;
 
-    if (user_id === "" || friend_id === "") {
+    if (user_id === "" || f_email === "") {
       alert("Please fill in all required fields.");
     } else {
-      add_friend(user_id, friend_id).then((data) => {
+      add_friend(user_id, f_email).then((data) => {
         if (data.toString().substring(0, 3) === 'ERR') {
           alert("Invalid email");
         } else {
-          this.setShowPassword(this.state.friend_open, "fo");
+          if (this.state.friend_open) {
+            this.setShowPassword(this.state.friend_open, "fo");
+          }
           this.makeUserTables(user_id);
           alert("Friend added!");
         }
@@ -184,7 +200,7 @@ class App extends Component {
           alert("Invalid email");
         } else {
           this.setShowPassword(this.state.fd_open, "fd");
-          this.makeUserTables();
+          this.makeUserTables(user_id);
           alert("Friend deleted!");
         }
       });
@@ -193,8 +209,12 @@ class App extends Component {
     }
   };
 
-  onViewFriend = (f_email) => {
+  onViewFriend = (f_email, f_name) => {
+    this.makeUserTables(f_email);
 
+    this.setState({
+      friend_first_name: f_name
+    });
   };
 
   render() {
@@ -211,7 +231,10 @@ class App extends Component {
       collection_open,
       friend_email,
       friend_open,
-      fd_open
+      fd_open,
+      f_friends,
+      f_collections,
+      friend_first_name
     } = this.state;
 
     return (
@@ -278,6 +301,19 @@ class App extends Component {
             exact
             path="/create-collection"
             render={() => <CreateCollectionScreen />}
+          />
+          <Route
+            exact
+            path="/friend"
+            render={() => 
+              <FriendScreen 
+                f_friends={f_friends}
+                f_collections={f_collections}
+                friend_first_name={friend_first_name}
+                logged_in={logged_in}
+                onLogout={this.onLogout}
+                onAddFriend={this.onAddFriend}
+              />}
           />
 
           {/* 

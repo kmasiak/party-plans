@@ -26,7 +26,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 class HomeScreen extends Component {
   render() {
@@ -45,7 +45,8 @@ class HomeScreen extends Component {
       onAddCollection,
       handleCollectionName,
       onRemoveFriend,
-      onViewFriend
+      onViewFriend,
+      friend_email
     } = this.props;
 
     if (!logged_in) {
@@ -102,7 +103,7 @@ class HomeScreen extends Component {
               <Button onClick={() => setShowPassword(friend_open, "fo")}>
                 Cancel
               </Button>
-              <Button onClick={onAddFriend}>Submit</Button>
+              <Button onClick={() => onAddFriend(friend_email)}>Submit</Button>
             </DialogActions>
           </Dialog>
           <Button
@@ -209,7 +210,9 @@ class HomeScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
-                          onClick={() => onViewFriend(row.email)}
+                          onClick={() => onViewFriend(row.email, row.f_name)}
+                          component={Link}
+                          to='/friend'
                         >
                           View Profile
                         </Button>
