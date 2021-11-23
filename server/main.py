@@ -134,6 +134,51 @@ def del_collection():
     
     return cur.callproc('list_delete', [list_id])
 
+@app.route('/party/view-collection', methods=['POST'])
+def view_collection():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('collection_id')
+    elements = []
+    
+    cur.callproc('get_elements', [list_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            elements.append(dict(zip(set.column_names,row))) 
+
+    return jsonify({
+        'collectionElements': elements
+    })
+
+@app.route('/party/search', methods=['POST'])
+def search_movies():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    title = request.json.get('title')
+    director = request.json.get('director')
+    actor = request.json.get('actor')
+    genre = request.json.get('genre')
+    keyword = request.json.get('keyword')
+    prod_company = request.json.get('prod_company')
+
+    elements = []
+
+    cur.callproc('get_all_movies', [title, director, actor, genre, keyword, prod_company])
+
+    for set in cur.stored_results():
+        for row in set:
+            elements.append(dict(zip(set.column_names,row))) 
+
+    return jsonify({
+        'elements': elements
+    })
 
 @app.route('/health-check', methods=['GET'])
 def heatlhcheck():
