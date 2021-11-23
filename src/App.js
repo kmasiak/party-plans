@@ -255,6 +255,7 @@ class App extends Component {
   };
 
   onRemoveCollection = (list_id, collection_name) => {
+    const user_id = this.state.email;
     const collection_id = list_id;
     var r = window.confirm(
       "Delete collection with name: " + collection_name + "?"
@@ -266,7 +267,7 @@ class App extends Component {
           alert("Collection could not be deleted.");
         } else {
           this.setShowPassword(this.state.fd_open, "fd");
-          //this.makeCollectionTables();
+          this.makeUserTables(user_id);
           alert("Collection deleted!");
         }
       });
