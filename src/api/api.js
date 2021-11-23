@@ -155,3 +155,58 @@ export const del_collection = async (collection_id) => {
     return "ERR " + err;
   }
 };
+
+export const view_collection = async (collection_id) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/view-collection",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          collection_id: collection_id,
+        }),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
+export const movie_search = async (
+  v_title,
+  v_director,
+  v_actor,
+  v_genre,
+  v_keyword,
+  v_prod
+) => {
+  try {
+    const response = await fetch("http://localhost:5000/party/search", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: v_title,
+        director: v_director,
+        actor: v_actor,
+        genre: v_genre,
+        keyword: v_keyword,
+        prod_company: v_prod,
+      }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};

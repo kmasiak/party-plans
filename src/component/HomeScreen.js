@@ -48,6 +48,7 @@ class HomeScreen extends Component {
       onRemoveCollection,
       onViewFriend,
       friend_email,
+      onViewCollection,
     } = this.props;
 
     if (!logged_in) {
@@ -263,6 +264,11 @@ class HomeScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
+                          onClick={() =>
+                            onViewCollection(row.list_id, row.list_name)
+                          }
+                          component={Link}
+                          to="/view-collection"
                         >
                           View
                         </Button>

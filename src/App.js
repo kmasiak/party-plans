@@ -7,6 +7,8 @@ import HomeScreen from "./component/HomeScreen";
 import LoginScreen from "./component/LoginScreen";
 import RegisterScreen from "./component/RegisterScreen";
 import FriendScreen from "./component/FriendScreen";
+import ViewCollectionScreen from "./component/ViewCollectionScreen";
+import MoviesScreen from "./component/MoviesScreen";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 
 import {
@@ -17,6 +19,8 @@ import {
   add_collection,
   del_friend,
   del_collection,
+  view_collection,
+  movie_search,
 } from "./api/api";
 
 class App extends Component {
@@ -24,6 +28,7 @@ class App extends Component {
     friends: [],
     parties: [],
     collections: [],
+    collectionElements: [],
     f_friends: [],
     f_collections: [],
     friend_first_name: "",
@@ -33,11 +38,19 @@ class App extends Component {
     password: "",
     first_name: "",
     last_name: "",
+    collection_id: "",
     collection_name: "",
     collection_open: false,
     friend_email: "",
     friend_open: false,
     fd_open: false,
+    f_title: "",
+    f_director: "",
+    f_actor: "",
+    f_genre: "",
+    f_keyword: "",
+    f_prod_comp: "",
+    movies: [],
   };
 
   handleEmail = (event) => {
@@ -64,6 +77,30 @@ class App extends Component {
   handleCollectionName = (event) => {
     console.log(this.state.collection_name);
     this.setState({ collection_name: event.target.value });
+  };
+
+  handleTitle = (event) => {
+    this.setState({ f_title: event.target.value });
+  };
+
+  handleDirector = (event) => {
+    this.setState({ f_director: event.target.value });
+  };
+
+  handleActor = (event) => {
+    this.setState({ f_actor: event.target.value });
+  };
+
+  handleGenre = (event) => {
+    this.setState({ f_genre: event.target.value });
+  };
+
+  handleKeyword = (event) => {
+    this.setState({ f_keyword: event.target.value });
+  };
+
+  handleProd = (event) => {
+    this.setState({ f_prod_comp: event.target.value });
   };
 
   setShowPassword = (bool_val, name) => {
@@ -246,11 +283,45 @@ class App extends Component {
     });
   };
 
+  onViewCollection = (list_id, list_name) => {
+    const collection_id = list_id;
+    const collection_name = list_name;
+
+    view_collection(collection_id).then((data) => {
+      this.setState({
+        collection_name: collection_name,
+        collectionElements: data.collectionElements,
+      });
+    });
+  };
+
+  onMovieSearch = () => {
+    const v_title = this.state.f_title;
+    const v_director = this.state.f_director;
+    const v_actor = this.state.f_actor;
+    const v_genre = this.state.f_genre;
+    const v_keyword = this.state.f_keyword;
+    const v_prod = this.state.f_prod_comp;
+
+    movie_search(v_title, v_director, v_actor, v_genre, v_keyword, v_prod).then(
+      (data) => {
+        if (!data) {
+          alert("Uh oh, something went wrong!");
+        } else {
+          this.setState({ movies: data.elements });
+        }
+      }
+    );
+  };
+
+  onViewMovie = () => {};
+
   render() {
     const {
       friends,
       parties,
       collections,
+      collectionElements,
       showPassword,
       logged_in,
       email,
@@ -264,10 +335,17 @@ class App extends Component {
       f_friends,
       f_collections,
       friend_first_name,
+      f_title,
+      f_director,
+      f_actor,
+      f_genre,
+      f_keyword,
+      f_prod_comp,
+      movies,
     } = this.state;
 
     return (
-      <div>
+      <div style={{ minHeight: "100%", margin: 0 }}>
         <Router>
           <Route
             exact
@@ -324,6 +402,7 @@ class App extends Component {
                 fd_open={fd_open}
                 onRemoveFriend={this.onRemoveFriend}
                 onViewFriend={this.onViewFriend}
+                onViewCollection={this.onViewCollection}
               />
             )}
           />
@@ -346,7 +425,50 @@ class App extends Component {
               />
             )}
           />
-
+          <Route
+            exact
+            path="/view-collection"
+            render={() => (
+              <ViewCollectionScreen
+                collection_id={f_friends}
+                collection_name={collection_name}
+                collectionElements={collectionElements}
+                onViewMovie={this.onViewMovie}
+                onAddMovies={this.onAddMovies}
+                onMovieSearch={this.onMovieSearch}
+                logged_in={logged_in}
+                onLogout={this.onLogout}
+              />
+            )}
+          />
+          <Route
+            exact
+            path="/movies"
+            render={() => (
+              <MoviesScreen
+                collection_id={f_friends}
+                collection_name={collection_name}
+                collectionElements={collectionElements}
+                f_title={f_title}
+                f_director={f_director}
+                f_actor={f_actor}
+                f_genre={f_genre}
+                f_keyword={f_keyword}
+                f_prod_comp={f_prod_comp}
+                handleTitle={this.handleTitle}
+                handleDirector={this.handleDirector}
+                handleActor={this.handleActor}
+                handleGenre={this.handleGenre}
+                handleKeyword={this.handleKeyword}
+                handleProd={this.handleProd}
+                movies={movies}
+                onMovieSearch={this.onMovieSearch}
+                //onViewMovie={this.onViewMovie}
+                logged_in={logged_in}
+                onLogout={this.onLogout}
+              />
+            )}
+          />
           {/* 
           <Route exact path="/create-party" render={() => (<CreatePartyScreen 
             
