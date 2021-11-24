@@ -11,6 +11,8 @@ import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
 import TextField from "@mui/material/TextField";
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -67,6 +69,9 @@ class MoviesScreen extends Component {
       handleGenre,
       handleKeyword,
       handleProd,
+      movie_open,
+      handleCollectionId,
+      onAddElement,
     } = this.props;
 
     if (!logged_in) {
@@ -261,7 +266,7 @@ class MoviesScreen extends Component {
                             }}
                             variant="contained"
                             endIcon={<AddIcon />}
-                            //onClick={() => onAddMovies()}
+                            onClick={() => onAddElement(row.movie_id)}
                           >
                             Add to Collection
                           </Button>

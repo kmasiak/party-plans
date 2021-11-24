@@ -111,6 +111,19 @@ def add_collection():
     
     return cur.callproc('list_create', [email, collection_name])
 
+@app.route('/party/add-element', methods=['POST'])
+def add_element():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('v_collection_id')
+    movie_id = request.json.get('v_movie_id')
+    hasWatched = 0
+    
+    return cur.callproc('element_add', [list_id, movie_id, hasWatched])
+
 @app.route('/party/delete-friend', methods=['POST'])
 def del_friend():
 
@@ -133,6 +146,18 @@ def del_collection():
     list_id = request.json.get('collection_id')
     
     return cur.callproc('list_delete', [list_id])
+
+@app.route('/party/delete-element', methods=['POST'])
+def del_element():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('collection_id')
+    movie_id = request.json.get('movie_id')
+    
+    return cur.callproc('element_delete', [list_id, movie_id])
 
 @app.route('/party/view-collection', methods=['POST'])
 def view_collection():
