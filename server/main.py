@@ -159,6 +159,18 @@ def del_element():
     
     return cur.callproc('element_delete', [list_id, movie_id])
 
+@app.route('/party/update-element', methods=['POST'])
+def update_element():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('collection_id')
+    movie_id = request.json.get('movie_id')
+    
+    return cur.callproc('element_update', [list_id, movie_id])
+
 @app.route('/party/view-collection', methods=['POST'])
 def view_collection():
 

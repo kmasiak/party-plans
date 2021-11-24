@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../css/HomeScreen.css";
 
-import { Button, Container, FormGroup } from "@material-ui/core";
+import { Button, Checkbox, Container, FormGroup } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EventIcon from "@material-ui/icons/Event";
@@ -55,7 +55,8 @@ class ViewCollectionScreen extends Component {
       collection_id,
       collection_name,
       onMovieSearch,
-      onRemoveElement
+      onRemoveElement,
+      onUpdateElement,
     } = this.props;
 
     if (!logged_in) {
@@ -114,6 +115,9 @@ class ViewCollectionScreen extends Component {
                     <TableCell align="left" style={{ color: "white" }}>
                       Release Date
                     </TableCell>
+                    <TableCell align="left" style={{ color: "white" }}>
+                      Watched
+                    </TableCell>
                     <TableCell />
                     <TableCell />
                   </TableRow>
@@ -134,6 +138,14 @@ class ViewCollectionScreen extends Component {
                         {row.release_date}
                       </TableCell>
                       <TableCell align="center">
+                        <Checkbox
+                          onChange={() =>
+                            onUpdateElement(row.list_id, row.movie_id)
+                          }
+                          checked={row.watched}
+                        />
+                      </TableCell>
+                      <TableCell align="center">
                         <Button
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
@@ -150,7 +162,9 @@ class ViewCollectionScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<DeleteIcon />}
-                          onClick={() => onRemoveElement(row.list_id, row.movie_id)}
+                          onClick={() =>
+                            onRemoveElement(row.list_id, row.movie_id)
+                          }
                         >
                           Delete
                         </Button>
