@@ -55,6 +55,7 @@ class ViewCollectionScreen extends Component {
       collection_id,
       collection_name,
       onMovieSearch,
+      onRemoveElement
     } = this.props;
 
     if (!logged_in) {
@@ -149,7 +150,7 @@ class ViewCollectionScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<DeleteIcon />}
-                          //onClick={() => onRemoveMovie()}
+                          onClick={() => onRemoveElement(row.list_id, row.movie_id)}
                         >
                           Delete
                         </Button>

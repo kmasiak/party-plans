@@ -21,6 +21,8 @@ import {
   del_collection,
   view_collection,
   movie_search,
+  add_element,
+  del_element
 } from "./api/api";
 
 class App extends Component {
@@ -51,6 +53,7 @@ class App extends Component {
     f_keyword: "",
     f_prod_comp: "",
     movies: [],
+    movie_open: false,
   };
 
   handleEmail = (event) => {
@@ -103,6 +106,10 @@ class App extends Component {
     this.setState({ f_prod_comp: event.target.value });
   };
 
+  handleCollectionId = (event) => {
+    this.setState({ collection_id: event.target.value })
+  }
+
   setShowPassword = (bool_val, name) => {
     if (name === "co") {
       this.setState({ collection_open: !bool_val });
@@ -112,6 +119,8 @@ class App extends Component {
       this.setState({ fd_open: !bool_val });
     } else if (name === "po") {
       this.setState({ party_open: !bool_val });
+    } else if (name === "mo") {
+      this.setState({ movie_open: !bool_val });
     } else {
       this.setState({ showPassword: !bool_val });
     }
@@ -292,6 +301,7 @@ class App extends Component {
       this.setState({
         collection_name: collection_name,
         collectionElements: data.collectionElements,
+        collection_id: collection_id
       });
     });
   };
@@ -314,6 +324,47 @@ class App extends Component {
       }
     );
   };
+
+  onAddElement = (movie_element) => {
+    const v_movie = movie_element
+    const v_collection = this.state.collection_id
+
+    add_element(v_collection, v_movie).then(
+      (data) => {
+        if (!data) {
+          alert("Uh oh, something went wrong!");
+        } else {
+          this.onViewCollection(v_collection, this.state.collection_name)
+        }
+      }
+    );
+  };
+
+  onRemoveElement = (c_id, m_id) => {
+    const v_collection = c_id
+    const v_movie = m_id
+
+    var r = window.confirm(
+      "Delete movie from collection?"
+    );
+
+    if (r) {
+      del_element(v_collection, v_movie).then(
+        (data) => {
+          if (!data) {
+            alert("Uh oh, something went wrong!");
+          } else {
+            this.onViewCollection(v_collection, this.state.collection_name)
+            alert("Element deleted!");
+          }
+        }
+      );
+    } else {
+      alert("Delete Cancelled!");
+    }
+
+    
+  }
 
   onViewMovie = () => {};
 
@@ -343,6 +394,8 @@ class App extends Component {
       f_keyword,
       f_prod_comp,
       movies,
+      movie_open,
+      collection_id
     } = this.state;
 
     return (
@@ -439,6 +492,7 @@ class App extends Component {
                 onMovieSearch={this.onMovieSearch}
                 logged_in={logged_in}
                 onLogout={this.onLogout}
+                onRemoveElement={this.onRemoveElement}
               />
             )}
           />
@@ -467,6 +521,11 @@ class App extends Component {
                 //onViewMovie={this.onViewMovie}
                 logged_in={logged_in}
                 onLogout={this.onLogout}
+                movie_open={movie_open}
+                handleCollectionId={this.handleCollectionId}
+                onAddElement={this.onAddElement}
+                setShowPassword={this.setShowPassword}
+                collections={collections}
               />
             )}
           />

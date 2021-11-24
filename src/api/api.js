@@ -90,6 +90,27 @@ export const add_friend = async (user_email, friend_email) => {
   }
 };
 
+export const add_element = async (list_id, movie_id) => {
+  try {
+    const response = await fetch("http://localhost:5000/party/add-element", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        v_collection_id: list_id,
+        v_movie_id: movie_id,
+      }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
 export const del_friend = async (user_email, friend_email) => {
   try {
     const response = await fetch("http://localhost:5000/party/delete-friend", {
@@ -201,6 +222,27 @@ export const movie_search = async (
         genre: v_genre,
         keyword: v_keyword,
         prod_company: v_prod,
+      }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
+export const del_element = async (c_id, m_id) => {
+  try {
+    const response = await fetch("http://localhost:5000/party/delete-element", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        collection_id: c_id,
+        movie_id: m_id,
       }),
     });
     const data = await response.json();
