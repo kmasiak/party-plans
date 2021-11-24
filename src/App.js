@@ -22,7 +22,8 @@ import {
   view_collection,
   movie_search,
   add_element,
-  del_element
+  del_element,
+  update_element,
 } from "./api/api";
 
 class App extends Component {
@@ -107,8 +108,8 @@ class App extends Component {
   };
 
   handleCollectionId = (event) => {
-    this.setState({ collection_id: event.target.value })
-  }
+    this.setState({ collection_id: event.target.value });
+  };
 
   setShowPassword = (bool_val, name) => {
     if (name === "co") {
@@ -301,7 +302,7 @@ class App extends Component {
       this.setState({
         collection_name: collection_name,
         collectionElements: data.collectionElements,
-        collection_id: collection_id
+        collection_id: collection_id,
       });
     });
   };
@@ -326,45 +327,52 @@ class App extends Component {
   };
 
   onAddElement = (movie_element) => {
-    const v_movie = movie_element
-    const v_collection = this.state.collection_id
+    const v_movie = movie_element;
+    const v_collection = this.state.collection_id;
+    const v_watched = this.state.watched;
 
-    add_element(v_collection, v_movie).then(
-      (data) => {
-        if (!data) {
-          alert("Uh oh, something went wrong!");
-        } else {
-          this.onViewCollection(v_collection, this.state.collection_name)
-        }
+    add_element(v_collection, v_movie, v_watched).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        this.onViewCollection(v_collection, this.state.collection_name);
       }
-    );
+    });
   };
 
   onRemoveElement = (c_id, m_id) => {
-    const v_collection = c_id
-    const v_movie = m_id
+    const v_collection = c_id;
+    const v_movie = m_id;
 
-    var r = window.confirm(
-      "Delete movie from collection?"
-    );
+    var r = window.confirm("Delete movie from collection?");
 
     if (r) {
-      del_element(v_collection, v_movie).then(
-        (data) => {
-          if (!data) {
-            alert("Uh oh, something went wrong!");
-          } else {
-            this.onViewCollection(v_collection, this.state.collection_name)
-            alert("Element deleted!");
-          }
+      del_element(v_collection, v_movie).then((data) => {
+        if (!data) {
+          alert("Uh oh, something went wrong!");
+        } else {
+          this.onViewCollection(v_collection, this.state.collection_name);
+          alert("Element deleted!");
         }
-      );
+      });
     } else {
       alert("Delete Cancelled!");
     }
+  };
 
-    
-  }
+  onUpdateElement = (c_id, m_id) => {
+    const v_collection = c_id;
+    const v_movie = m_id;
+
+    update_element(v_collection, v_movie).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        this.onViewCollection(v_collection, this.state.collection_name);
+        alert("Element updated!");
+      }
+    });
+  };
 
   onViewMovie = () => {};
 
@@ -395,7 +403,8 @@ class App extends Component {
       f_prod_comp,
       movies,
       movie_open,
-      collection_id
+      collection_id,
+      watched,
     } = this.state;
 
     return (
@@ -493,6 +502,7 @@ class App extends Component {
                 logged_in={logged_in}
                 onLogout={this.onLogout}
                 onRemoveElement={this.onRemoveElement}
+                onUpdateElement={this.onUpdateElement}
               />
             )}
           />
