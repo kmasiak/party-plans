@@ -24,6 +24,8 @@ import {
   add_element,
   del_element,
   update_element,
+  create_party,
+  get_party_users,
 } from "./api/api";
 
 class App extends Component {
@@ -374,6 +376,33 @@ class App extends Component {
     });
   };
 
+  onCreateParty = (m_id) => {
+    const user_id = this.state.email;
+    const v_movie = m_id;
+
+    create_party(user_id, v_movie).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        //this.onViewCollection(v_collection, this.state.collection_name);
+        alert("Party created!");
+      }
+    });
+  };
+
+  onPartyUsers = (p_id) => {
+    const v_party_users = p_id;
+
+    get_party_users(v_party_users).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        //this.onViewCollection(v_collection, this.state.collection_name);
+        alert("Element updated!");
+      }
+    });
+  };
+
   onViewMovie = () => {};
 
   render() {
@@ -503,6 +532,7 @@ class App extends Component {
                 onLogout={this.onLogout}
                 onRemoveElement={this.onRemoveElement}
                 onUpdateElement={this.onUpdateElement}
+                onCreateParty={this.onCreateParty}
               />
             )}
           />
@@ -539,15 +569,22 @@ class App extends Component {
               />
             )}
           />
-          {/* 
-          <Route exact path="/create-party" render={() => (<CreatePartyScreen 
-            
-            />)}
+
+          <Route
+            exact
+            path="/create-party"
+            render={() => (
+              <CreatePartyScreen
+                logged_in={logged_in}
+                onLogout={this.onLogout}
+              />
+            )}
           />
-          <Route exact path="/create-review" render={() => (<CreateReviewScreen 
-            
-            />)}
-          /> */}
+          <Route
+            exact
+            path="/create-review"
+            render={() => <CreateReviewScreen />}
+          />
         </Router>
       </div>
     );
