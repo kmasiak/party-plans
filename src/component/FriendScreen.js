@@ -36,7 +36,8 @@ class FriendScreen extends Component {
       friend_first_name,
       f_friends,
       f_collections,
-      onAddFriend
+      onAddFriend, 
+      emails
     } = this.props;
 
     if (!logged_in) {
@@ -101,14 +102,14 @@ class FriendScreen extends Component {
                       </TableCell>
                       <TableCell align="left">{row.l_name}</TableCell>
                       <TableCell align="center">
-                        <Button
+                        {(!emails.some(x => x == row.email)) && <Button
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<PersonAddIcon />}
                           onClick={() => onAddFriend(row.email)}
                         >
                           Add
-                        </Button>
+                        </Button>}
                       </TableCell>
                     </TableRow>
                   ))}
