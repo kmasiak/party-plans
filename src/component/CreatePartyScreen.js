@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Component } from "react";
+import "../css/HomeScreen.css";
 
 import { Button, Container, FormGroup, TextField } from "@material-ui/core";
 import PartyPlans from "../images/party-plans.png";
@@ -41,161 +42,188 @@ const rowsUsersTable = [
   createUsersData("Kyle", "Masiak"),
 ];
 
-export default function CreatePartyScreen() {
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        <img
+class CreatePartyScreen extends Component {
+  render() {
+    const {
+      friends,
+      parties,
+      collections,
+      collectionElements,
+      first_name,
+      logged_in,
+      onLogout,
+      collection_open,
+      friend_open,
+      setShowPassword,
+      handleFemail,
+      onAddFriend,
+      onAddCollection,
+      handleCollectionName,
+      onRemoveFriend,
+      onRemoveCollection,
+      onViewFriend,
+      friend_email,
+      onViewMovie,
+      onAddMovies,
+      collection_id,
+      collection_name,
+      onMovieSearch,
+      onRemoveElement,
+      onUpdateElement,
+      onCreateParty,
+    } = this.props;
+    return (
+      <div>
+        <div
           style={{
-            height: "7.5%",
-            width: "7.5%",
-            display: "block",
-          }}
-          src={PartyPlans}
-          alt="Party Plans Logo"
-        />
-
-        <h1
-          style={{
-            marginTop: "auto",
-            marginBottom: "auto",
-            marginRight: "auto",
+            display: "flex",
+            flexDirection: "row",
           }}
         >
-          Create Party
-        </h1>
+          <Link to="/home">
+            <img className="img2" src={PartyPlans} alt="Party Plans Logo" />
+          </Link>
 
-        <Button
-          style={{
-            backgroundColor: "#dc143c",
-            color: "white",
-            margin: "5px",
-            height: "0%",
-          }}
-          variant="contained"
-          endIcon={<LogoutIcon />}
-        >
-          Logout
-        </Button>
-      </div>
-      <Container maxWidth="m">
-        <FormGroup>
-          <br />
-
-          <TableContainer
-            sx={{ marginRight: "auto", marginLeft: "auto", width: "80%" }}
+          <h1
+            style={{
+              marginTop: "auto",
+              marginBottom: "auto",
+              marginRight: "auto",
+            }}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <h2
-                style={{
-                  marginTop: "auto",
-                  marginBottom: "auto",
-                }}
-              >
-                Movie: {movieTitle}
-              </h2>
+            Create Party
+          </h1>
 
-              <TextField
-                id="datetime-local"
-                label="Date & Time"
-                type="datetime-local"
-                defaultValue="2021-12-15T21:30"
-                style={{ marginRight: "auto", marginLeft: "24px" }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-              <Button
-                id="saveBtn"
-                style={{
-                  backgroundColor: "#dc143c",
-                  color: "white",
-                  margin: "5px",
-                }}
-                variant="contained"
-                endIcon={<SaveIcon />}
-                onClick={() => onSaveParty()}
-              >
-                Save Party
-              </Button>
-              <Button
-                id="discardBtn"
-                style={{
-                  backgroundColor: "#dc143c",
-                  color: "white",
-                  margin: "5px",
-                }}
-                variant="contained"
-                endIcon={<DeleteIcon />}
-                onClick={() => onDiscardParty()}
-              >
-                Discard Party
-              </Button>
-            </div>
-            <br />
-
-            <Table>
-              <TableHead>
-                <TableRow style={{ backgroundColor: "#dc143c" }}>
-                  <TableCell align="left" style={{ color: "white" }}>
-                    First Name
-                  </TableCell>
-                  <TableCell align="center" style={{ color: "white" }}>
-                    Last Name
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rowsUsersTable.map((row) => (
-                  <TableRow
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    style={{ backgroundColor: "#f5f5f5" }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.fname}
-                    </TableCell>
-                    <TableCell align="center">{row.lname}</TableCell>
-                    <TableCell align="center">
-                      <Button
-                        variant="contained"
-                        style={{ backgroundColor: "#dc143c", color: "white" }}
-                        endIcon={<DeleteIcon />}
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <br />
           <Button
-            id="addMoviesBtn"
             style={{
               backgroundColor: "#dc143c",
               color: "white",
-              alignSelf: "center",
+              margin: "5px",
+              height: "0%",
             }}
             variant="contained"
-            endIcon={<AddIcon />}
-            onClick={() => onAddUsers()}
+            onClick={onLogout}
+            endIcon={<LogoutIcon />}
           >
-            Add Users
+            Logout
           </Button>
-        </FormGroup>
-      </Container>
-    </div>
-  );
+        </div>
+        <Container maxWidth="m">
+          <FormGroup>
+            <br />
+
+            <TableContainer
+              sx={{ marginRight: "auto", marginLeft: "auto", width: "80%" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
+                <h2
+                  style={{
+                    marginTop: "auto",
+                    marginBottom: "auto",
+                  }}
+                >
+                  Movie: {movieTitle}
+                </h2>
+
+                <TextField
+                  id="datetime-local"
+                  label="Date & Time"
+                  type="datetime-local"
+                  defaultValue="2021-12-15T21:30"
+                  style={{ marginRight: "auto", marginLeft: "24px" }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <Button
+                  id="saveBtn"
+                  style={{
+                    backgroundColor: "#dc143c",
+                    color: "white",
+                    margin: "5px",
+                  }}
+                  variant="contained"
+                  endIcon={<SaveIcon />}
+                  onClick={() => onSaveParty()}
+                >
+                  Save Party
+                </Button>
+                <Button
+                  id="discardBtn"
+                  style={{
+                    backgroundColor: "#dc143c",
+                    color: "white",
+                    margin: "5px",
+                  }}
+                  variant="contained"
+                  endIcon={<DeleteIcon />}
+                  onClick={() => onDiscardParty()}
+                >
+                  Discard Party
+                </Button>
+              </div>
+              <br />
+
+              <Table>
+                <TableHead>
+                  <TableRow style={{ backgroundColor: "#dc143c" }}>
+                    <TableCell align="left" style={{ color: "white" }}>
+                      First Name
+                    </TableCell>
+                    <TableCell align="center" style={{ color: "white" }}>
+                      Last Name
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rowsUsersTable.map((row) => (
+                    <TableRow
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      style={{ backgroundColor: "#f5f5f5" }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.fname}
+                      </TableCell>
+                      <TableCell align="center">{row.lname}</TableCell>
+                      <TableCell align="center">
+                        <Button
+                          variant="contained"
+                          style={{ backgroundColor: "#dc143c", color: "white" }}
+                          endIcon={<DeleteIcon />}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <br />
+            <Button
+              id="addMoviesBtn"
+              style={{
+                backgroundColor: "#dc143c",
+                color: "white",
+                alignSelf: "center",
+              }}
+              variant="contained"
+              endIcon={<AddIcon />}
+              onClick={() => onAddUsers()}
+            >
+              Add Users
+            </Button>
+          </FormGroup>
+        </Container>
+      </div>
+    );
+  }
 }
+
+export default CreatePartyScreen;
