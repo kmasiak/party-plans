@@ -87,6 +87,26 @@ def get_home():
         'collections': collections
     })
 
+@app.route('/party/get-party-users', methods=['POST'])
+def get_party_users():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    party_id = request.json.get('party_id')
+    users = []
+    
+    cur.callproc('get_party_users', [party_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            users.append(dict(zip(set.column_names,row))) 
+
+    return jsonify({
+        'partyUsers': users
+    })
+
 @app.route('/party/add-friend', methods=['POST'])
 def add_friend():
 
@@ -123,6 +143,20 @@ def add_element():
     hasWatched = 0
     
     return cur.callproc('element_add', [list_id, movie_id, hasWatched])
+
+@app.route('/party/create-party', methods=['POST'])
+def create_party():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    movie_id = request.json.get('movie_id')
+    time = '2020/08/17 11:00:00'
+    link = 'https://google.com'
+    user_email = request.json.get('email')
+    
+    return cur.callproc('party_create', [movie_id, time, link, user_email])
 
 @app.route('/party/delete-friend', methods=['POST'])
 def del_friend():

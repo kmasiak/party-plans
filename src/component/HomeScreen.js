@@ -3,7 +3,6 @@ import "../css/HomeScreen.css";
 
 import { Button } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
-import EventIcon from "@material-ui/icons/Event";
 import LinkIcon from "@material-ui/icons/Link";
 import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
@@ -116,6 +115,7 @@ class HomeScreen extends Component {
               height: "0%",
               marginTop: "auto",
               marginBottom: "auto",
+              marginRight: "auto",
             }}
             variant="contained"
             endIcon={<ListIcon />}
@@ -148,21 +148,6 @@ class HomeScreen extends Component {
               <Button onClick={onAddCollection}>Submit</Button>
             </DialogActions>
           </Dialog>
-          <Button
-            style={{
-              backgroundColor: "#dc143c",
-              color: "white",
-              margin: "5px",
-              height: "0%",
-              marginTop: "auto",
-              marginBottom: "auto",
-              marginRight: "auto",
-            }}
-            variant="contained"
-            endIcon={<EventIcon />}
-          >
-            Create Party
-          </Button>
           <Button
             style={{
               backgroundColor: "#dc143c",
