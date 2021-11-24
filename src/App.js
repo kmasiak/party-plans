@@ -55,6 +55,7 @@ class App extends Component {
     f_prod_comp: "",
     movies: [],
     movie_open: false,
+    emails: []
   };
 
   handleEmail = (event) => {
@@ -130,16 +131,25 @@ class App extends Component {
   makeUserTables = (uemail) => {
     if (uemail == this.state.email) {
       home(uemail).then((data) => {
-        console.log(data.parties);
+        const email_list = []
+        
+        email_list.push(uemail)
+
         this.setState({
           friends: data.friends,
           parties: data.parties,
           collections: data.collections,
         });
+        for (var key in data.friends) {
+          email_list.push(data.friends[key].email)
+        }
+        this.setState({ emails: email_list });
+
+        console.log(email_list);
       });
     } else {
       home(uemail).then((data) => {
-        console.log(data.parties);
+        console.log(data.friends.email);
         this.setState({
           f_friends: data.friends,
           f_collections: data.collections,
@@ -405,6 +415,7 @@ class App extends Component {
       movie_open,
       collection_id,
       watched,
+      emails
     } = this.state;
 
     return (
@@ -485,6 +496,7 @@ class App extends Component {
                 logged_in={logged_in}
                 onLogout={this.onLogout}
                 onAddFriend={this.onAddFriend}
+                emails={emails}
               />
             )}
           />
