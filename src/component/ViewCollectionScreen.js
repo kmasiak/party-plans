@@ -57,6 +57,7 @@ class ViewCollectionScreen extends Component {
       onMovieSearch,
       onRemoveElement,
       onUpdateElement,
+      onCreateParty,
     } = this.props;
 
     if (!logged_in) {
@@ -120,6 +121,7 @@ class ViewCollectionScreen extends Component {
                     </TableCell>
                     <TableCell />
                     <TableCell />
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -155,6 +157,18 @@ class ViewCollectionScreen extends Component {
                           //to="/view-collection"
                         >
                           View
+                        </Button>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          component={Link}
+                          to="/create-party"
+                          variant="contained"
+                          style={{ backgroundColor: "#dc143c", color: "white" }}
+                          endIcon={<EventIcon />}
+                          onClick={() => onCreateParty(row.movie_id)}
+                        >
+                          Create Party
                         </Button>
                       </TableCell>
                       <TableCell align="center">
