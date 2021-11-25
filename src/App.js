@@ -9,6 +9,7 @@ import RegisterScreen from "./component/RegisterScreen";
 import FriendScreen from "./component/FriendScreen";
 import ViewCollectionScreen from "./component/ViewCollectionScreen";
 import MoviesScreen from "./component/MoviesScreen";
+import MovieDetailsScreen from "./component/MovieDetailsScreen";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 
 import {
@@ -55,6 +56,14 @@ class App extends Component {
     f_genre: "",
     f_keyword: "",
     f_prod_comp: "",
+    m_title: "",
+    m_director: "",
+    m_duration: "",
+    m_release_date: "",
+    m_actor: "",
+    m_genre: "",
+    m_keyword: "",
+    m_prod_comp: "",
     movies: [],
     movie_open: false,
   };
@@ -403,7 +412,9 @@ class App extends Component {
     });
   };
 
-  onViewMovie = () => {};
+  onViewMovie = (m_id) => {
+    //
+  };
 
   render() {
     const {
@@ -533,6 +544,8 @@ class App extends Component {
                 onRemoveElement={this.onRemoveElement}
                 onUpdateElement={this.onUpdateElement}
                 onCreateParty={this.onCreateParty}
+                setShowPassword={this.setShowPassword}
+                movie_open={this.movie_open}
               />
             )}
           />
@@ -575,6 +588,16 @@ class App extends Component {
             path="/create-party"
             render={() => (
               <CreatePartyScreen
+                logged_in={logged_in}
+                onLogout={this.onLogout}
+              />
+            )}
+          />
+          <Route
+            exact
+            path="/view-movie"
+            render={() => (
+              <MovieDetailsScreen
                 logged_in={logged_in}
                 onLogout={this.onLogout}
               />

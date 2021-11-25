@@ -251,6 +251,47 @@ def search_movies():
         'elements': elements
     })
 
+@app.route('/party/get-movie-contents', methods=['POST']) 
+def get_movie_contents():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    movie_id = request.json.get('movie_id')
+
+    contents = []
+
+    cur.callproc('get_movie_details', [movie_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            contents.append(row.title, row.director, row.duration, row.release_date) 
+
+    cur.callproc('get_movie_cast', [movie_id])
+
+    cur.callproc('get_movie_genre', [movie_id])
+
+    cur.callproc('get_movie_keywords', [movie_id])
+
+    cur.callproc('get_movie_prod_co', [movie_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            parties.append(dict(zip(set.column_names,row))) 
+
+    cur.callproc('get_lists', [email])
+
+    for set in cur.stored_results():
+        for row in set:
+            collections.append(dict(zip(set.column_names,row))) 
+
+    return jsonify({
+        'friends': friends,
+        'parties': parties,
+        'collections': collections
+    })
+
 @app.route('/health-check', methods=['GET'])
 def heatlhcheck():
     return 'REEEEEEEE'
