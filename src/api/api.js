@@ -31,7 +31,7 @@ export const poster = async (m_id) => {
         movie_id: m_id
       }),
     });
-    return response;
+    return response.json();
   } catch (err) {
     console.log("ERR ", err);
     return "ERR " + err;

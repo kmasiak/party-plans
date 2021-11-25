@@ -17,7 +17,9 @@ def get_link():
 
     response = requests.get("https://api.themoviedb.org/3/movie/" + movie_id + "?api_key=5f082672bb0fe7eb48029d6c82c6d764&language=en-US")
 
-    return "https://image.tmdb.org/t/p/original" + response.json()['poster_path']
+    return jsonify({
+        'poster_link': "https://image.tmdb.org/t/p/original" + response.json()['poster_path']
+    })
 
 @app.route('/party/login', methods=['POST'])
 def login():
