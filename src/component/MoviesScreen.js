@@ -72,6 +72,7 @@ class MoviesScreen extends Component {
       movie_open,
       handleCollectionId,
       onAddElement,
+      movie_ids
     } = this.props;
 
     if (!logged_in) {
@@ -188,7 +189,7 @@ class MoviesScreen extends Component {
                 }}
                 variant="contained"
                 //endIcon={<AddIcon />}
-                onClick={() => onMovieSearch()}
+                onClick={() => onMovieSearch(false)}
               >
                 Apply Filters
               </Button>
@@ -236,7 +237,7 @@ class MoviesScreen extends Component {
                           {row.director}
                         </TableCell>
                         <TableCell component="th" scope="row">
-                          {row.release_date}
+                          {new Date(row.release_date).toDateString()}
                         </TableCell>
                         <TableCell component="th" scope="row">
                           {row.duration}
@@ -257,7 +258,7 @@ class MoviesScreen extends Component {
                           </Button>
                         </TableCell>
                         <TableCell align="center">
-                          <Button
+                          {(!movie_ids.some(x => x == row.movie_id)) && <Button
                             id="addMoviesBtn"
                             style={{
                               backgroundColor: "#dc143c",
@@ -269,7 +270,7 @@ class MoviesScreen extends Component {
                             onClick={() => onAddElement(row.movie_id)}
                           >
                             Add to Collection
-                          </Button>
+                          </Button>}
                         </TableCell>
                       </TableRow>
                     ))}

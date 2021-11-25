@@ -19,6 +19,25 @@ export const login = async (user_email, user_password) => {
   }
 };
 
+export const poster = async (m_id) => {
+  try {
+    const response = await fetch("http://localhost:5000/party/poster-link", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        movie_id: m_id
+      }),
+    });
+    return response;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
 export const register = async (
   user_email,
   user_f_name,
