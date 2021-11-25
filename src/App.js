@@ -27,6 +27,7 @@ import {
   update_element,
   create_party,
   get_party_users,
+  poster
 } from "./api/api";
 
 class App extends Component {
@@ -66,6 +67,9 @@ class App extends Component {
     m_prod_comp: "",
     movies: [],
     movie_open: false,
+    emails: [],
+    movie_ids: [],
+    poster_link: ""
   };
 
   handleEmail = (event) => {
@@ -141,16 +145,25 @@ class App extends Component {
   makeUserTables = (uemail) => {
     if (uemail == this.state.email) {
       home(uemail).then((data) => {
-        console.log(data.parties);
+        const email_list = []
+        
+        email_list.push(uemail)
+
         this.setState({
           friends: data.friends,
           parties: data.parties,
           collections: data.collections,
         });
+        for (var key in data.friends) {
+          email_list.push(data.friends[key].email)
+        }
+        this.setState({ emails: email_list });
+
+        console.log(email_list);
       });
     } else {
       home(uemail).then((data) => {
-        console.log(data.parties);
+        console.log(data.friends.email);
         this.setState({
           f_friends: data.friends,
           f_collections: data.collections,
@@ -230,7 +243,6 @@ class App extends Component {
             this.setShowPassword(this.state.friend_open, "fo");
           }
           this.makeUserTables(user_id);
-          alert("Friend added!");
         }
       });
     }
@@ -308,8 +320,17 @@ class App extends Component {
   onViewCollection = (list_id, list_name) => {
     const collection_id = list_id;
     const collection_name = list_name;
+    const element_list = [];
 
     view_collection(collection_id).then((data) => {
+      for (var key in data.collectionElements) {
+        element_list.push(data.collectionElements[key].movie_id)
+      }
+
+      console.log(element_list);
+
+      this.setState({ movie_ids: element_list });
+
       this.setState({
         collection_name: collection_name,
         collectionElements: data.collectionElements,
@@ -318,13 +339,37 @@ class App extends Component {
     });
   };
 
-  onMovieSearch = () => {
-    const v_title = this.state.f_title;
-    const v_director = this.state.f_director;
-    const v_actor = this.state.f_actor;
-    const v_genre = this.state.f_genre;
-    const v_keyword = this.state.f_keyword;
-    const v_prod = this.state.f_prod_comp;
+  onMovieSearch = (new_page) => {
+    var v_title
+    var v_director
+    var v_actor
+    var v_genre
+    var v_keyword
+    var v_prod
+
+    if (new_page) {
+      this.setState({
+        f_title: "",
+        f_director: "",
+        f_actor: "",
+        f_genre: "",
+        f_keyword: "",
+        f_prod_comp: ""
+      });
+      v_title = "";
+      v_director = "";
+      v_actor = "";
+      v_genre = "";
+      v_keyword = "";
+      v_prod = "";
+    } else {
+      v_title = this.state.f_title;
+      v_director = this.state.f_director;
+      v_actor = this.state.f_actor;
+      v_genre = this.state.f_genre;
+      v_keyword = this.state.f_keyword;
+      v_prod = this.state.f_prod_comp;
+    }
 
     movie_search(v_title, v_director, v_actor, v_genre, v_keyword, v_prod).then(
       (data) => {
@@ -445,6 +490,8 @@ class App extends Component {
       movie_open,
       collection_id,
       watched,
+      emails,
+      movie_ids
     } = this.state;
 
     return (
@@ -525,6 +572,7 @@ class App extends Component {
                 logged_in={logged_in}
                 onLogout={this.onLogout}
                 onAddFriend={this.onAddFriend}
+                emails={emails}
               />
             )}
           />
@@ -579,6 +627,7 @@ class App extends Component {
                 onAddElement={this.onAddElement}
                 setShowPassword={this.setShowPassword}
                 collections={collections}
+                movie_ids={movie_ids}
               />
             )}
           />

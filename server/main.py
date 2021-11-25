@@ -4,10 +4,20 @@ from flask import Flask, jsonify, request
 from requests import get
 from flask_cors import CORS
 import hashlib
+import requests
 
 app = Flask(__name__)
 
 CORS(app)
+
+@app.route('/party/poster-link', methods=['POST'])
+def get_link():
+
+    movie_id = request.json.get('movie_id') 
+
+    response = requests.get("https://api.themoviedb.org/3/movie/" + movie_id + "?api_key=5f082672bb0fe7eb48029d6c82c6d764&language=en-US")
+
+    return "https://image.tmdb.org/t/p/original" + response.json()['poster_path']
 
 @app.route('/party/login', methods=['POST'])
 def login():
