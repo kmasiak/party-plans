@@ -73,7 +73,7 @@ class MovieDetailsScreen extends Component {
       handleCollectionId,
       onAddElement,
       onShowMovie,
-      poster_link
+      poster_link,
     } = this.props;
 
     if (!logged_in) {
@@ -120,7 +120,11 @@ class MovieDetailsScreen extends Component {
               <div
                 style={{ display: "flex", flex: 0.5, flexDirection: "column" }}
               >
-                <img className="img2" src={poster_link} alt="movie poster" />
+                <img
+                  style={{ width: "75%", height: "100%" }}
+                  src={poster_link}
+                  alt="movie poster"
+                />
               </div>
               <div
                 style={{ display: "flex", flex: 0.5, flexDirection: "column" }}

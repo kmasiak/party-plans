@@ -27,7 +27,7 @@ import {
   update_element,
   create_party,
   get_party_users,
-  poster
+  poster,
 } from "./api/api";
 
 class App extends Component {
@@ -69,16 +69,16 @@ class App extends Component {
     movie_open: false,
     emails: [],
     movie_ids: [],
-    poster_link: ""
+    poster_link: "",
   };
 
   getPosterLink = (m_id) => {
     poster(m_id).then((data) => {
       this.setState({
-        poster_link: data.poster_link
+        poster_link: data.poster_link,
       });
     });
-  }
+  };
 
   handleEmail = (event) => {
     this.setState({ email: event.target.value });
@@ -153,9 +153,9 @@ class App extends Component {
   makeUserTables = (uemail) => {
     if (uemail == this.state.email) {
       home(uemail).then((data) => {
-        const email_list = []
-        
-        email_list.push(uemail)
+        const email_list = [];
+
+        email_list.push(uemail);
 
         this.setState({
           friends: data.friends,
@@ -163,7 +163,7 @@ class App extends Component {
           collections: data.collections,
         });
         for (var key in data.friends) {
-          email_list.push(data.friends[key].email)
+          email_list.push(data.friends[key].email);
         }
         this.setState({ emails: email_list });
 
@@ -332,7 +332,7 @@ class App extends Component {
 
     view_collection(collection_id).then((data) => {
       for (var key in data.collectionElements) {
-        element_list.push(data.collectionElements[key].movie_id)
+        element_list.push(data.collectionElements[key].movie_id);
       }
 
       console.log(element_list);
@@ -348,12 +348,12 @@ class App extends Component {
   };
 
   onMovieSearch = (new_page) => {
-    var v_title
-    var v_director
-    var v_actor
-    var v_genre
-    var v_keyword
-    var v_prod
+    var v_title;
+    var v_director;
+    var v_actor;
+    var v_genre;
+    var v_keyword;
+    var v_prod;
 
     if (new_page) {
       this.setState({
@@ -362,7 +362,7 @@ class App extends Component {
         f_actor: "",
         f_genre: "",
         f_keyword: "",
-        f_prod_comp: ""
+        f_prod_comp: "",
       });
       v_title = "";
       v_director = "";
@@ -466,10 +466,10 @@ class App extends Component {
   };
 
   onViewMovie = (m_id) => {
-    const id = String(m_id)
-    this.getPosterLink(id)
+    const id = String(m_id);
+    this.getPosterLink(id);
 
-    console.log(this.state.poster_link)
+    console.log(this.state.poster_link);
   };
 
   render() {
@@ -502,8 +502,8 @@ class App extends Component {
       collection_id,
       watched,
       emails,
-      movie_ids, 
-      poster_link
+      movie_ids,
+      poster_link,
     } = this.state;
 
     return (
@@ -632,7 +632,7 @@ class App extends Component {
                 handleProd={this.handleProd}
                 movies={movies}
                 onMovieSearch={this.onMovieSearch}
-                //onViewMovie={this.onViewMovie}
+                onViewMovie={this.onViewMovie}
                 logged_in={logged_in}
                 onLogout={this.onLogout}
                 movie_open={movie_open}

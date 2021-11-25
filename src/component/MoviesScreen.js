@@ -253,7 +253,7 @@ class MoviesScreen extends Component {
                             endIcon={<ViewIcon />}
                             component={Link}
                             to="/view-movie"
-                            //onClick={() => onShowMovie(row.movie_id)}
+                            onClick={() => onViewMovie(row.movie_id)}
                           >
                             View
                           </Button>
