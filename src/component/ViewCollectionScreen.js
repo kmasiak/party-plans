@@ -28,6 +28,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { Link, Redirect } from "react-router-dom";
+import { TrendingUp } from "@material-ui/icons";
 
 class ViewCollectionScreen extends Component {
   render() {
@@ -58,6 +59,7 @@ class ViewCollectionScreen extends Component {
       onRemoveElement,
       onUpdateElement,
       onCreateParty,
+      renderMovieSearch
     } = this.props;
 
     if (!logged_in) {
@@ -137,7 +139,7 @@ class ViewCollectionScreen extends Component {
                         {row.director}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {row.release_date}
+                        {new Date(row.release_date).toDateString()}
                       </TableCell>
                       <TableCell align="center">
                         <Checkbox
@@ -198,7 +200,7 @@ class ViewCollectionScreen extends Component {
               }}
               variant="contained"
               endIcon={<AddIcon />}
-              onClick={() => onMovieSearch()}
+              onClick={() => onMovieSearch(true)}
               component={Link}
               to="/movies"
             >
