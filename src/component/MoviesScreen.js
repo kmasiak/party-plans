@@ -11,8 +11,8 @@ import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
 import TextField from "@mui/material/TextField";
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -72,6 +72,7 @@ class MoviesScreen extends Component {
       movie_open,
       handleCollectionId,
       onAddElement,
+      onShowMovie,
     } = this.props;
 
     if (!logged_in) {
@@ -249,9 +250,9 @@ class MoviesScreen extends Component {
                               color: "white",
                             }}
                             endIcon={<ViewIcon />}
-                            //onClick={() => onViewMovie()}
-                            //component={Link}
-                            //to="/view-collection"
+                            component={Link}
+                            to="/view-movie"
+                            //onClick={() => onShowMovie(row.movie_id)}
                           >
                             View
                           </Button>

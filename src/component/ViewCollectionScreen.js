@@ -41,6 +41,7 @@ class ViewCollectionScreen extends Component {
       onLogout,
       collection_open,
       friend_open,
+      movie_open,
       setShowPassword,
       handleFemail,
       onAddFriend,
@@ -152,9 +153,7 @@ class ViewCollectionScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
-                          onClick={() => onViewMovie()}
-                          //component={Link}
-                          //to="/view-collection"
+                          //onClick={() => setShowPassword(movie_open, "mo")}
                         >
                           View
                         </Button>
