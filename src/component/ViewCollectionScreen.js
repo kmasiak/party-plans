@@ -60,7 +60,7 @@ class ViewCollectionScreen extends Component {
       onRemoveElement,
       onUpdateElement,
       onCreateParty,
-      renderMovieSearch
+      renderMovieSearch,
     } = this.props;
 
     if (!logged_in) {
@@ -155,7 +155,9 @@ class ViewCollectionScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
-                          //onClick={() => setShowPassword(movie_open, "mo")}
+                          onClick={() => onViewMovie(row.movie_id)}
+                          component={Link}
+                          to="/view-movie"
                         >
                           View
                         </Button>

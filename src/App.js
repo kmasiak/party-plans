@@ -72,6 +72,14 @@ class App extends Component {
     poster_link: ""
   };
 
+  getPosterLink = (m_id) => {
+    poster(m_id).then((data) => {
+      this.setState({
+        poster_link: data.poster_link
+      });
+    });
+  }
+
   handleEmail = (event) => {
     this.setState({ email: event.target.value });
   };
@@ -458,7 +466,10 @@ class App extends Component {
   };
 
   onViewMovie = (m_id) => {
-    //
+    const id = String(m_id)
+    this.getPosterLink(id)
+
+    console.log(this.state.poster_link)
   };
 
   render() {
@@ -491,7 +502,8 @@ class App extends Component {
       collection_id,
       watched,
       emails,
-      movie_ids
+      movie_ids, 
+      poster_link
     } = this.state;
 
     return (
@@ -594,6 +606,7 @@ class App extends Component {
                 onCreateParty={this.onCreateParty}
                 setShowPassword={this.setShowPassword}
                 movie_open={this.movie_open}
+                onViewMovie={this.onViewMovie}
               />
             )}
           />
@@ -649,6 +662,7 @@ class App extends Component {
               <MovieDetailsScreen
                 logged_in={logged_in}
                 onLogout={this.onLogout}
+                poster_link={poster_link}
               />
             )}
           />
