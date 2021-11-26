@@ -28,7 +28,7 @@ export const poster = async (m_id) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        movie_id: m_id
+        movie_id: m_id,
       }),
     });
     return response.json();
@@ -330,6 +330,30 @@ export const get_party_users = async (party_id) => {
         }),
       }
     );
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
+export const get_movie_contents = async (movie_id) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/get-movie-contents",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          movie_id: movie_id,
+        }),
+      }
+    );
+
     const data = await response.json();
     return data;
   } catch (err) {

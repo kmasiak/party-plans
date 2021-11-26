@@ -278,30 +278,34 @@ def get_movie_contents():
 
     for set in cur.stored_results():
         for row in set:
-            contents.append(row.title, row.director, row.duration, row.release_date) 
+            contents.append(dict(zip(set.column_names,row)))
 
     cur.callproc('get_movie_cast', [movie_id])
 
+    for set in cur.stored_results():
+        for row in set:
+            contents.append(dict(zip(set.column_names,row))) 
+
     cur.callproc('get_movie_genre', [movie_id])
 
+    for set in cur.stored_results():
+        for row in set:
+            contents.append(dict(zip(set.column_names,row))) 
+
     cur.callproc('get_movie_keywords', [movie_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            contents.append(dict(zip(set.column_names,row))) 
 
     cur.callproc('get_movie_prod_co', [movie_id])
 
     for set in cur.stored_results():
         for row in set:
-            parties.append(dict(zip(set.column_names,row))) 
-
-    cur.callproc('get_lists', [email])
-
-    for set in cur.stored_results():
-        for row in set:
-            collections.append(dict(zip(set.column_names,row))) 
+            contents.append(dict(zip(set.column_names,row)))
 
     return jsonify({
-        'friends': friends,
-        'parties': parties,
-        'collections': collections
+        'm_contents': contents,
     })
 
 @app.route('/health-check', methods=['GET'])
