@@ -4,6 +4,7 @@ import "../css/HomeScreen.css";
 import { Button, Checkbox, Container, FormGroup } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EventIcon from "@material-ui/icons/Event";
 import LinkIcon from "@material-ui/icons/Link";
 import ListIcon from "@material-ui/icons/List";
@@ -61,6 +62,8 @@ class ViewCollectionScreen extends Component {
       onUpdateElement,
       onCreateParty,
       renderMovieSearch,
+      friend_collection,
+      onDuplicateCollection
     } = this.props;
 
     if (!logged_in) {
@@ -119,11 +122,11 @@ class ViewCollectionScreen extends Component {
                     <TableCell align="left" style={{ color: "white" }}>
                       Release Date
                     </TableCell>
-                    <TableCell align="left" style={{ color: "white" }}>
+                    {!friend_collection && <TableCell align="left" style={{ color: "white" }}>
                       Watched
-                    </TableCell>
-                    <TableCell />
-                    <TableCell />
+                    </TableCell>}
+                    {!friend_collection && <TableCell />}
+                    {!friend_collection && <TableCell />}
                     <TableCell />
                   </TableRow>
                 </TableHead>
@@ -142,14 +145,14 @@ class ViewCollectionScreen extends Component {
                       <TableCell component="th" scope="row">
                         {new Date(row.release_date).toDateString()}
                       </TableCell>
-                      <TableCell align="center">
+                      {!friend_collection && <TableCell align="center">
                         <Checkbox
                           onChange={() =>
                             onUpdateElement(row.list_id, row.movie_id)
                           }
                           checked={row.watched}
                         />
-                      </TableCell>
+                      </TableCell>}
                       <TableCell align="center">
                         <Button
                           variant="contained"
@@ -162,7 +165,7 @@ class ViewCollectionScreen extends Component {
                           View
                         </Button>
                       </TableCell>
-                      <TableCell align="center">
+                      {!friend_collection && <TableCell align="center">
                         <Button
                           component={Link}
                           to="/create-party"
@@ -173,8 +176,8 @@ class ViewCollectionScreen extends Component {
                         >
                           Create Party
                         </Button>
-                      </TableCell>
-                      <TableCell align="center">
+                      </TableCell>}
+                      {!friend_collection && <TableCell align="center">
                         <Button
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
@@ -185,14 +188,14 @@ class ViewCollectionScreen extends Component {
                         >
                           Delete
                         </Button>
-                      </TableCell>
+                      </TableCell>}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
             <br />
-            <Button
+            {!friend_collection ? <Button
               id="addMoviesBtn"
               style={{
                 backgroundColor: "#dc143c",
@@ -206,7 +209,44 @@ class ViewCollectionScreen extends Component {
               to="/movies"
             >
               Add Movies
-            </Button>
+            </Button> : <Button
+              id="addMoviesBtn"
+              style={{
+                backgroundColor: "#dc143c",
+                color: "white",
+                alignSelf: "center",
+              }}
+              variant="contained"
+              endIcon={<ContentCopyIcon />}
+              onClick={() => setShowPassword(collection_open, "co")}
+            >
+              Duplicate Collection
+            </Button>}
+            <Dialog
+              open={collection_open}
+              onClose={() => setShowPassword(collection_open, "co")}
+            >
+              <DialogTitle>Duplicate a Collection</DialogTitle>
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="New Collection Name"
+                  type="text"
+                  fullWidth
+                  variant="standard"
+                  inputProps={{ maxLength: 45 }}
+                  onChange={handleCollectionName}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setShowPassword(collection_open, "co")}>
+                  Cancel
+                </Button>
+                <Button onClick={onDuplicateCollection}>Submit</Button>
+              </DialogActions>
+            </Dialog>
           </FormGroup>
         </Container>
       </div>

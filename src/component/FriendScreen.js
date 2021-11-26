@@ -37,7 +37,8 @@ class FriendScreen extends Component {
       f_friends,
       f_collections,
       onAddFriend, 
-      emails
+      emails,
+      onViewCollection
     } = this.props;
 
     if (!logged_in) {
@@ -145,6 +146,11 @@ class FriendScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
+                          onClick={() =>
+                            onViewCollection(row.list_id, row.list_name, true)
+                          }
+                          component={Link}
+                          to="/view-collection"
                         >
                           View
                         </Button>
