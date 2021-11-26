@@ -61,6 +61,14 @@ class MovieDetailsScreen extends Component {
       f_genre,
       f_keyword,
       f_prod_comp,
+      m_title,
+      m_director,
+      m_duration,
+      m_release_date,
+      m_actor,
+      m_genre,
+      m_keyword,
+      m_prod_comp,
       movies,
       onMovieSearch,
       handleTitle,
@@ -94,7 +102,7 @@ class MovieDetailsScreen extends Component {
             }}
             className="h1"
           >
-            Movie Title
+            {m_title}
           </h1>
 
           <Button
@@ -129,19 +137,21 @@ class MovieDetailsScreen extends Component {
               <div
                 style={{ display: "flex", flex: 0.5, flexDirection: "column" }}
               >
-                <text>Director: </text>
+                <text>Director: {m_director}</text>
                 <br />
-                <text>Duration: </text>
+                <text>Duration: {m_duration} minutes</text>
                 <br />
-                <text>Release Date: </text>
+                <text>
+                  Release Date: {new Date(m_release_date).toDateString()}
+                </text>
                 <br />
-                <text>Cast: </text>
+                <text>Cast: {m_actor.join(", ")}</text>
                 <br />
-                <text>Genres: </text>
+                <text>Genres: {m_genre.join(", ")}</text>
                 <br />
-                <text>Keywords: </text>
+                <text>Keywords: {m_keyword.join(", ")}</text>
                 <br />
-                <text>Production Companies: </text>
+                <text>Production Companies: {m_prod_comp.join(", ")}</text>
               </div>
             </div>
             <br />

@@ -28,7 +28,9 @@ import {
   create_party,
   get_party_users,
   poster,
+  get_movie_contents,
 } from "./api/api";
+import { duration } from "@material-ui/core";
 
 class App extends Component {
   state = {
@@ -61,10 +63,10 @@ class App extends Component {
     m_director: "",
     m_duration: "",
     m_release_date: "",
-    m_actor: "",
-    m_genre: "",
-    m_keyword: "",
-    m_prod_comp: "",
+    m_actor: [],
+    m_genre: [],
+    m_keyword: [],
+    m_prod_comp: [],
     movies: [],
     movie_open: false,
     emails: [],
@@ -446,7 +448,6 @@ class App extends Component {
       if (!data) {
         alert("Uh oh, something went wrong!");
       } else {
-        //this.onViewCollection(v_collection, this.state.collection_name);
         alert("Party created!");
       }
     });
@@ -459,7 +460,6 @@ class App extends Component {
       if (!data) {
         alert("Uh oh, something went wrong!");
       } else {
-        //this.onViewCollection(v_collection, this.state.collection_name);
         alert("Element updated!");
       }
     });
@@ -469,7 +469,46 @@ class App extends Component {
     const id = String(m_id);
     this.getPosterLink(id);
 
-    console.log(this.state.poster_link);
+    get_movie_contents(m_id).then((data) => {
+      var title = "";
+      var director = "";
+      var duration = "";
+      var release_date = "";
+      const cast = [];
+      const genre = [];
+      const keyword = [];
+      const prod_comp = [];
+
+      title = data.m_contents[0].title;
+      director = data.m_contents[0].director;
+      duration = String(data.m_contents[0].duration);
+      release_date = String(data.m_contents[0].release_date);
+
+      for (var key in data.m_contents) {
+        if (typeof data.m_contents[key].cast_name !== "undefined") {
+          cast.push(data.m_contents[key].cast_name);
+        }
+        if (typeof data.m_contents[key].genre_name !== "undefined") {
+          genre.push(data.m_contents[key].genre_name);
+        }
+        if (typeof data.m_contents[key].keyword_name !== "undefined") {
+          keyword.push(data.m_contents[key].keyword_name);
+        }
+        if (typeof data.m_contents[key].pc_name !== "undefined") {
+          prod_comp.push(data.m_contents[key].pc_name);
+        }
+      }
+      this.setState({
+        m_title: title,
+        m_director: director,
+        m_duration: duration,
+        m_release_date: release_date,
+        m_actor: cast,
+        m_genre: genre,
+        m_keyword: keyword,
+        m_prod_comp: prod_comp,
+      });
+    });
   };
 
   render() {
@@ -497,6 +536,14 @@ class App extends Component {
       f_genre,
       f_keyword,
       f_prod_comp,
+      m_title,
+      m_director,
+      m_duration,
+      m_release_date,
+      m_actor,
+      m_genre,
+      m_keyword,
+      m_prod_comp,
       movies,
       movie_open,
       collection_id,
@@ -663,6 +710,14 @@ class App extends Component {
                 logged_in={logged_in}
                 onLogout={this.onLogout}
                 poster_link={poster_link}
+                m_title={m_title}
+                m_director={m_director}
+                m_duration={m_duration}
+                m_release_date={m_release_date}
+                m_actor={m_actor}
+                m_genre={m_genre}
+                m_keyword={m_keyword}
+                m_prod_comp={m_prod_comp}
               />
             )}
           />
