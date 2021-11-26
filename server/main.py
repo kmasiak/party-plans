@@ -237,6 +237,19 @@ def view_collection():
         'collectionElements': elements
     })
 
+@app.route('/party/duplicate-collection', methods=['POST'])
+def duplicate_collection():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    email = request.json.get('email')
+    list_name = request.json.get('collection_name')
+    list_id = request.json.get('collection_id')
+    
+    return cur.callproc('duplicate_list', [email, list_name, list_id])
+
 @app.route('/party/search', methods=['POST'])
 def search_movies():
 

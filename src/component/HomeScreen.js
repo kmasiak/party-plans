@@ -250,7 +250,7 @@ class HomeScreen extends Component {
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
                           onClick={() =>
-                            onViewCollection(row.list_id, row.list_name)
+                            onViewCollection(row.list_id, row.list_name, false)
                           }
                           component={Link}
                           to="/view-collection"

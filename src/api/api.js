@@ -241,6 +241,31 @@ export const view_collection = async (collection_id) => {
   }
 };
 
+export const duplicate_collection = async (email, collection_name, collection_id) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/duplicate-collection",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          collection_name: collection_name,
+          collection_id: collection_id,
+        }),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
 export const movie_search = async (
   v_title,
   v_director,

@@ -29,6 +29,7 @@ import {
   get_party_users,
   poster,
   get_movie_contents,
+  duplicate_collection
 } from "./api/api";
 import { duration } from "@material-ui/core";
 
@@ -72,6 +73,7 @@ class App extends Component {
     emails: [],
     movie_ids: [],
     poster_link: "",
+    friend_collection: false
   };
 
   getPosterLink = (m_id) => {
@@ -327,9 +329,10 @@ class App extends Component {
     });
   };
 
-  onViewCollection = (list_id, list_name) => {
+  onViewCollection = (list_id, list_name, friend_coll) => {
     const collection_id = list_id;
     const collection_name = list_name;
+    const friend_collection = friend_coll
     const element_list = [];
 
     view_collection(collection_id).then((data) => {
@@ -337,9 +340,10 @@ class App extends Component {
         element_list.push(data.collectionElements[key].movie_id);
       }
 
-      console.log(element_list);
-
-      this.setState({ movie_ids: element_list });
+      this.setState({ 
+        movie_ids: element_list,
+        friend_collection: friend_collection
+       });
 
       this.setState({
         collection_name: collection_name,
@@ -347,6 +351,8 @@ class App extends Component {
         collection_id: collection_id,
       });
     });
+
+    
   };
 
   onMovieSearch = (new_page) => {
@@ -401,7 +407,7 @@ class App extends Component {
       if (!data) {
         alert("Uh oh, something went wrong!");
       } else {
-        this.onViewCollection(v_collection, this.state.collection_name);
+        this.onViewCollection(v_collection, this.state.collection_name, false);
       }
     });
   };
@@ -417,7 +423,7 @@ class App extends Component {
         if (!data) {
           alert("Uh oh, something went wrong!");
         } else {
-          this.onViewCollection(v_collection, this.state.collection_name);
+          this.onViewCollection(v_collection, this.state.collection_name, false);
           alert("Element deleted!");
         }
       });
@@ -434,7 +440,7 @@ class App extends Component {
       if (!data) {
         alert("Uh oh, something went wrong!");
       } else {
-        this.onViewCollection(v_collection, this.state.collection_name);
+        this.onViewCollection(v_collection, this.state.collection_name, false);
         alert("Element updated!");
       }
     });
@@ -511,6 +517,27 @@ class App extends Component {
     });
   };
 
+  onDuplicateCollection = () => {
+    const u_email = this.state.email
+    const v_collection_name = this.state.collection_name
+    const v_collection_id = this.state.collection_id
+    const user_id = this.state.email;
+
+    if (v_collection_name === "") {
+      alert("Collection Name cannot be empty.");
+    } else {
+      duplicate_collection(u_email, v_collection_name, v_collection_id).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("You already have a collection with that name.");
+        } else {
+          this.setShowPassword(this.state.collection_open, "co");
+          this.makeUserTables(user_id);
+          alert("Collection created!");
+        }
+      });
+    }
+  }
+
   render() {
     const {
       friends,
@@ -551,6 +578,7 @@ class App extends Component {
       emails,
       movie_ids,
       poster_link,
+      friend_collection
     } = this.state;
 
     return (
@@ -632,6 +660,7 @@ class App extends Component {
                 onLogout={this.onLogout}
                 onAddFriend={this.onAddFriend}
                 emails={emails}
+                onViewCollection={this.onViewCollection}
               />
             )}
           />
@@ -654,6 +683,10 @@ class App extends Component {
                 setShowPassword={this.setShowPassword}
                 movie_open={this.movie_open}
                 onViewMovie={this.onViewMovie}
+                friend_collection={friend_collection}
+                onDuplicateCollection={this.onDuplicateCollection}
+                collection_open={collection_open}
+                handleCollectionName={this.handleCollectionName}
               />
             )}
           />
