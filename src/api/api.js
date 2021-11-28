@@ -196,6 +196,31 @@ export const create_party = async (user_email, movie_id, party_time) => {
   }
 };
 
+export const add_party_users = async (user_email, p_id) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/add-party-users",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user_email,
+          party_id: p_id,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
 export const del_collection = async (collection_id) => {
   try {
     const response = await fetch(
@@ -365,7 +390,7 @@ export const update_element = async (c_id, m_id) => {
   }
 };
 
-export const get_party_users = async (party_id) => {
+export const get_party_users = async (p_id) => {
   try {
     const response = await fetch(
       "http://localhost:5000/party/get-party-users",
@@ -376,7 +401,7 @@ export const get_party_users = async (party_id) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          party_id: party_id,
+          party_id: p_id,
         }),
       }
     );
