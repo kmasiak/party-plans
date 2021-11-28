@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import CreateCollectionScreen from "./component/CreateCollectionScreen";
-import CreatePartyScreen from "./component/CreatePartyScreen";
+import PartyScreen from "./component/PartyScreen";
 import CreateReviewScreen from "./component/CreateReviewScreen";
 import HomeScreen from "./component/HomeScreen";
 import LoginScreen from "./component/LoginScreen";
@@ -26,10 +26,11 @@ import {
   del_element,
   update_element,
   create_party,
+  del_party,
   get_party_users,
   poster,
   get_movie_contents,
-  duplicate_collection
+  duplicate_collection,
 } from "./api/api";
 import { duration } from "@material-ui/core";
 
@@ -69,11 +70,15 @@ class App extends Component {
     m_keyword: [],
     m_prod_comp: [],
     movies: [],
+    movie_id: 0,
+    movie_name: "",
     movie_open: false,
     emails: [],
     movie_ids: [],
+    party_open: false,
+    party_time: "",
     poster_link: "",
-    friend_collection: false
+    friend_collection: false,
   };
 
   getPosterLink = (m_id) => {
@@ -136,6 +141,10 @@ class App extends Component {
 
   handleCollectionId = (event) => {
     this.setState({ collection_id: event.target.value });
+  };
+
+  handlePartyTime = (event) => {
+    this.setState({ party_time: event.target.value });
   };
 
   setShowPassword = (bool_val, name) => {
@@ -332,7 +341,7 @@ class App extends Component {
   onViewCollection = (list_id, list_name, friend_coll) => {
     const collection_id = list_id;
     const collection_name = list_name;
-    const friend_collection = friend_coll
+    const friend_collection = friend_coll;
     const element_list = [];
 
     view_collection(collection_id).then((data) => {
@@ -340,10 +349,10 @@ class App extends Component {
         element_list.push(data.collectionElements[key].movie_id);
       }
 
-      this.setState({ 
+      this.setState({
         movie_ids: element_list,
-        friend_collection: friend_collection
-       });
+        friend_collection: friend_collection,
+      });
 
       this.setState({
         collection_name: collection_name,
@@ -351,8 +360,6 @@ class App extends Component {
         collection_id: collection_id,
       });
     });
-
-    
   };
 
   onMovieSearch = (new_page) => {
@@ -423,7 +430,11 @@ class App extends Component {
         if (!data) {
           alert("Uh oh, something went wrong!");
         } else {
-          this.onViewCollection(v_collection, this.state.collection_name, false);
+          this.onViewCollection(
+            v_collection,
+            this.state.collection_name,
+            false
+          );
           alert("Element deleted!");
         }
       });
@@ -446,17 +457,74 @@ class App extends Component {
     });
   };
 
-  onCreateParty = (m_id) => {
+  onPartyDialog = (m_id) => {
+    this.setShowPassword(this.state.party_open, "po");
+
+    this.setState({
+      movie_id: m_id,
+    });
+  };
+
+  onCreateParty = () => {
+    const user_id = this.state.email;
+    const v_movie = this.state.movie_id;
+    const v_time = this.state.party_time;
+
+    if (v_time === "") {
+      alert("Please enter a time for the party before proceeding.");
+    } else {
+      create_party(user_id, v_movie, v_time).then((data) => {
+        if (!data) {
+          alert("Uh oh, something went wrong!");
+        } else {
+          if (this.state.party_open) {
+            this.setShowPassword(this.state.party_open, "po");
+            this.makeUserTables(user_id);
+          }
+          alert("Party created!");
+        }
+      });
+    }
+  };
+
+  onViewParty = (m_id, m_title) => {
     const user_id = this.state.email;
     const v_movie = m_id;
+    const v_time = this.state.party_time;
 
-    create_party(user_id, v_movie).then((data) => {
+    this.setState({
+      movie_id: m_id,
+      movie_name: m_title,
+    });
+
+    /*create_party(user_id, v_movie, v_time).then((data) => {
       if (!data) {
         alert("Uh oh, something went wrong!");
       } else {
+        if (this.state.party_open) {
+          this.setShowPassword(this.state.party_open, "po");
+        }
         alert("Party created!");
       }
-    });
+    });*/
+  };
+
+  onRemoveParty = (p_id, movie_name) => {
+    const user_id = this.state.email;
+    var r = window.confirm("Delete party " + movie_name + "?");
+
+    if (r) {
+      del_party(p_id).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Party could not be deleted.");
+        } else {
+          this.makeUserTables(user_id);
+          alert("Party deleted!");
+        }
+      });
+    } else {
+      alert("Delete Cancelled!");
+    }
   };
 
   onPartyUsers = (p_id) => {
@@ -518,25 +586,27 @@ class App extends Component {
   };
 
   onDuplicateCollection = () => {
-    const u_email = this.state.email
-    const v_collection_name = this.state.collection_name
-    const v_collection_id = this.state.collection_id
+    const u_email = this.state.email;
+    const v_collection_name = this.state.collection_name;
+    const v_collection_id = this.state.collection_id;
     const user_id = this.state.email;
 
     if (v_collection_name === "") {
       alert("Collection Name cannot be empty.");
     } else {
-      duplicate_collection(u_email, v_collection_name, v_collection_id).then((data) => {
-        if (data.toString().substring(0, 3) === "ERR") {
-          alert("You already have a collection with that name.");
-        } else {
-          this.setShowPassword(this.state.collection_open, "co");
-          this.makeUserTables(user_id);
-          alert("Collection created!");
+      duplicate_collection(u_email, v_collection_name, v_collection_id).then(
+        (data) => {
+          if (data.toString().substring(0, 3) === "ERR") {
+            alert("You already have a collection with that name.");
+          } else {
+            this.setShowPassword(this.state.collection_open, "co");
+            this.makeUserTables(user_id);
+            alert("Collection created!");
+          }
         }
-      });
+      );
     }
-  }
+  };
 
   render() {
     const {
@@ -572,13 +642,16 @@ class App extends Component {
       m_keyword,
       m_prod_comp,
       movies,
+      movie_id,
+      movie_name,
       movie_open,
       collection_id,
       watched,
       emails,
       movie_ids,
       poster_link,
-      friend_collection
+      friend_collection,
+      party_open,
     } = this.state;
 
     return (
@@ -631,6 +704,7 @@ class App extends Component {
                 handleCollectionName={this.handleCollectionName}
                 onAddCollection={this.onAddCollection}
                 onRemoveCollection={this.onRemoveCollection}
+                onRemoveParty={this.onRemoveParty}
                 friend_email={friend_email}
                 friend_open={friend_open}
                 onAddFriend={this.onAddFriend}
@@ -640,6 +714,7 @@ class App extends Component {
                 onRemoveFriend={this.onRemoveFriend}
                 onViewFriend={this.onViewFriend}
                 onViewCollection={this.onViewCollection}
+                onViewParty={this.onViewParty}
               />
             )}
           />
@@ -679,6 +754,7 @@ class App extends Component {
                 onLogout={this.onLogout}
                 onRemoveElement={this.onRemoveElement}
                 onUpdateElement={this.onUpdateElement}
+                onPartyDialog={this.onPartyDialog}
                 onCreateParty={this.onCreateParty}
                 setShowPassword={this.setShowPassword}
                 movie_open={this.movie_open}
@@ -687,6 +763,8 @@ class App extends Component {
                 onDuplicateCollection={this.onDuplicateCollection}
                 collection_open={collection_open}
                 handleCollectionName={this.handleCollectionName}
+                party_open={party_open}
+                handlePartyTime={this.handlePartyTime}
               />
             )}
           />
@@ -727,11 +805,14 @@ class App extends Component {
 
           <Route
             exact
-            path="/create-party"
+            path="/view-party"
             render={() => (
-              <CreatePartyScreen
+              <PartyScreen
                 logged_in={logged_in}
                 onLogout={this.onLogout}
+                onRemoveParty={this.onRemoveParty}
+                movie_id={movie_id}
+                movie_name={movie_name}
               />
             )}
           />
