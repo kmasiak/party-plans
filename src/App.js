@@ -95,6 +95,7 @@ class App extends Component {
     party_time: "2021-12-15T21:30",
     party_url: "",
     recUsers: [],
+    rev_emails: []
   };
 
   getPosterLink = (m_id) => {
@@ -572,6 +573,8 @@ class App extends Component {
       dialog = true;
     }
 
+    const my_email = this.state.email
+
     console.log(user_id);
 
     add_party_users(user_id, p_id).then((data) => {
@@ -591,7 +594,7 @@ class App extends Component {
             });
           }
         });
-        get_recommended_users(user_id, p_id).then((data) => {
+        get_recommended_users(my_email, p_id).then((data) => {
           this.setState({
             recUsers: data.rec_users,
           });
@@ -602,6 +605,8 @@ class App extends Component {
 
   onRemoveUser = (email, p_id) => {
     var r = window.confirm("Delete user from party?");
+
+    const my_email = this.state.email
 
     if (r) {
       del_user_party(email, p_id).then((data) => {
@@ -618,7 +623,7 @@ class App extends Component {
               });
             }
           });
-          get_recommended_users(email, p_id).then((data) => {
+          get_recommended_users(my_email, p_id).then((data) => {
             console.log(data.rec_users);
             this.setState({
               recUsers: data.rec_users,
@@ -672,6 +677,7 @@ class App extends Component {
       const genre = [];
       const keyword = [];
       const prod_comp = [];
+      const email_list = [];
 
       title = data.m_contents[0].title;
       director = data.m_contents[0].director;
@@ -692,6 +698,13 @@ class App extends Component {
           prod_comp.push(data.m_contents[key].pc_name);
         }
       }
+
+      for (var key in data.m_reviews) {
+        email_list.push(data.m_reviews[key].user_email);
+      }
+
+      console.log(email_list);
+
       this.setState({
         m_title: title,
         m_director: director,
@@ -703,6 +716,7 @@ class App extends Component {
         m_prod_comp: prod_comp,
         m_reviews: data.m_reviews,
         movie_id: m_id,
+        rev_emails: email_list
       });
     });
   };
@@ -762,13 +776,13 @@ class App extends Component {
       alert("Please fill in all required fields.");
     } else {
       update_review(user_id, m_id, rating, comments).then((data) => {
-        if (data.toString().substring(0, 3) === "ERR") {
-          alert("Something went wrong");
-        } else {
+        if (data == undefined) {
           if (this.state.review_open) {
             this.setShowPassword(this.state.review_open, "ro");
           }
           this.onViewMovie(m_id);
+        } else {
+          alert("Something went wrong");
         }
       });
     }
@@ -829,6 +843,7 @@ class App extends Component {
       party_time,
       party_url,
       recUsers,
+      rev_emails
     } = this.state;
 
     return (
@@ -1029,6 +1044,8 @@ class App extends Component {
                 handleRating={this.handleRating}
                 handleComments={this.handleComments}
                 onUpdateReview={this.onUpdateReview}
+                rev_emails={rev_emails}
+                email={email}
               />
             )}
           />

@@ -14,6 +14,7 @@ import TextField from "@mui/material/TextField";
 import Rating from "@mui/material/Rating";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import EditIcon from '@mui/icons-material/Edit';
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -92,6 +93,8 @@ class MovieDetailsScreen extends Component {
       handleRating,
       handleComments,
       onUpdateReview,
+      rev_emails,
+      email
     } = this.props;
 
     if (!logged_in) {
@@ -166,62 +169,97 @@ class MovieDetailsScreen extends Component {
             </div>
             <br />
 
-            <Button
-              id="addReviewBtn"
-              style={{
-                backgroundColor: "#dc143c",
-                color: "white",
-                alignSelf: "center",
-              }}
-              variant="contained"
-              endIcon={<AddIcon />}
-              onClick={() => setShowPassword(review_open, "ro")}
-            >
-              Add Review
-            </Button>
-            <Dialog
+            {rev_emails.some(x => x == email) ? (
+            <Container maxWidth="sm">
+              <Button
+                id="updateReviewBtn"
+                style={{
+                  backgroundColor: "#dc143c",
+                  color: "white",
+                  alignSelf: "center",
+                }}
+                variant="contained"
+                endIcon={<EditIcon />}
+                onClick={() => setShowPassword(review_open, "ro")}
+              >
+                Update Review
+              </Button>
+              <Dialog
+                open={review_open}
+                onClose={() => setShowPassword(review_open, "ro")}
+              >
+                <DialogTitle>Update a Review</DialogTitle>
+                <DialogContent>
+                  <Rating
+                    name="simple-controlled"
+                    value={parseInt(r_rating)}
+                    onChange={handleRating}
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Comments"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    inputProps={{ maxLength: 200 }}
+                    onChange={handleComments}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setShowPassword(review_open, "ro")}>
+                    Cancel
+                  </Button>
+                  <Button onClick={onUpdateReview}>Submit</Button>
+                </DialogActions>
+              </Dialog>
+            </Container>) :
+            (<Container maxWidth="sm">
+              <Button
+                id="addReviewBtn"
+                style={{
+                  backgroundColor: "#dc143c",
+                  color: "white",
+                  alignSelf: 'center'
+                }}
+                variant="contained"
+                endIcon={<AddIcon />}
+                onClick={() => setShowPassword(review_open, "ro")}
+              >
+                Add Review
+              </Button>
+              <Dialog
               open={review_open}
               onClose={() => setShowPassword(review_open, "ro")}
-            >
-              <DialogTitle>Update a Review</DialogTitle>
-              <DialogContent>
-                <Rating
-                  name="simple-controlled"
-                  value={parseInt(r_rating)}
-                  onChange={handleRating}
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Comments"
-                  type="text"
-                  fullWidth
-                  variant="standard"
-                  inputProps={{ maxLength: 200 }}
-                  onChange={handleComments}
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setShowPassword(review_open, "ro")}>
-                  Cancel
-                </Button>
-                <Button onClick={onUpdateReview}>Submit</Button>
-              </DialogActions>
-            </Dialog>
-            {/*<Button
-                  id="addReviewBtn"
-                  style={{
-                    backgroundColor: "#dc143c",
-                    color: "white",
-                    alignSelf: 'center'
-                  }}
-                  variant="contained"
-                  endIcon={<AddIcon />}
-                  onClick={() => setShowPassword(review_open, "ro")}
-                >
-                  Update Review
-                </Button>*/}
+              >
+                <DialogTitle>Add a Review</DialogTitle>
+                <DialogContent>
+                  <Rating
+                    name="simple-controlled"
+                    value={parseInt(r_rating)}
+                    onChange={handleRating}
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Comments"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    inputProps={{ maxLength: 200 }}
+                    onChange={handleComments}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setShowPassword(review_open, "ro")}>
+                    Cancel
+                  </Button>
+                  <Button onClick={onAddReview}>Submit</Button>
+                </DialogActions>
+              </Dialog>
+            </Container>)}
           </FormGroup>
         </Container>
         <br />
