@@ -31,6 +31,7 @@ import {
   poster,
   get_movie_contents,
   duplicate_collection,
+  add_party_users,
 } from "./api/api";
 import { duration } from "@material-ui/core";
 
@@ -40,6 +41,7 @@ class App extends Component {
     parties: [],
     collections: [],
     collectionElements: [],
+    partyUsers: [],
     f_friends: [],
     f_collections: [],
     friend_first_name: "",
@@ -79,6 +81,9 @@ class App extends Component {
     party_time: "",
     poster_link: "",
     friend_collection: false,
+    party_id: 0,
+    puser_open: false,
+    puser_email: "",
   };
 
   getPosterLink = (m_id) => {
@@ -147,6 +152,10 @@ class App extends Component {
     this.setState({ party_time: event.target.value });
   };
 
+  handleUemail = (event) => {
+    this.setState({ puser_email: event.target.value });
+  };
+
   setShowPassword = (bool_val, name) => {
     if (name === "co") {
       this.setState({ collection_open: !bool_val });
@@ -158,6 +167,8 @@ class App extends Component {
       this.setState({ party_open: !bool_val });
     } else if (name === "mo") {
       this.setState({ movie_open: !bool_val });
+    } else if (name === "puo") {
+      this.setState({ puser_open: !bool_val });
     } else {
       this.setState({ showPassword: !bool_val });
     }
@@ -487,26 +498,25 @@ class App extends Component {
     }
   };
 
-  onViewParty = (m_id, m_title) => {
+  onViewParty = (p_id, m_title) => {
     const user_id = this.state.email;
-    const v_movie = m_id;
+    const v_party_users = p_id;
     const v_time = this.state.party_time;
 
     this.setState({
-      movie_id: m_id,
       movie_name: m_title,
+      party_id: p_id,
     });
 
-    /*create_party(user_id, v_movie, v_time).then((data) => {
+    get_party_users(v_party_users).then((data) => {
       if (!data) {
         alert("Uh oh, something went wrong!");
       } else {
-        if (this.state.party_open) {
-          this.setShowPassword(this.state.party_open, "po");
-        }
-        alert("Party created!");
+        this.setState({
+          partyUsers: data.party_users,
+        });
       }
-    });*/
+    });
   };
 
   onRemoveParty = (p_id, movie_name) => {
@@ -527,14 +537,26 @@ class App extends Component {
     }
   };
 
-  onPartyUsers = (p_id) => {
-    const v_party_users = p_id;
+  onAddUser = (p_id) => {
+    const user_id = this.state.puser_email;
 
-    get_party_users(v_party_users).then((data) => {
-      if (!data) {
-        alert("Uh oh, something went wrong!");
+    console.log(user_id);
+
+    add_party_users(user_id, p_id).then((data) => {
+      if (data.toString().substring(0, 3) === "ERR") {
+        alert("Invalid email");
       } else {
-        alert("Element updated!");
+        alert("User added!");
+        this.setShowPassword(this.state.puser_open, "puo");
+        get_party_users(p_id).then((data) => {
+          if (!data) {
+            alert("Uh oh, something went wrong!");
+          } else {
+            this.setState({
+              partyUsers: data.party_users,
+            });
+          }
+        });
       }
     });
   };
@@ -614,6 +636,7 @@ class App extends Component {
       parties,
       collections,
       collectionElements,
+      partyUsers,
       showPassword,
       logged_in,
       email,
@@ -652,6 +675,9 @@ class App extends Component {
       poster_link,
       friend_collection,
       party_open,
+      party_id,
+      puser_open,
+      puser_email,
     } = this.state;
 
     return (
@@ -810,9 +836,14 @@ class App extends Component {
               <PartyScreen
                 logged_in={logged_in}
                 onLogout={this.onLogout}
-                onRemoveParty={this.onRemoveParty}
                 movie_id={movie_id}
                 movie_name={movie_name}
+                partyUsers={partyUsers}
+                onAddUser={this.onAddUser}
+                party_id={party_id}
+                puser_open={puser_open}
+                handleUemail={this.handleUemail}
+                setShowPassword={this.setShowPassword}
               />
             )}
           />

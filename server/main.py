@@ -116,7 +116,7 @@ def get_party_users():
             users.append(dict(zip(set.column_names,row))) 
 
     return jsonify({
-        'partyUsers': users
+        'party_users': users
     })
 
 @app.route('/party/add-friend', methods=['POST'])
@@ -169,6 +169,18 @@ def create_party():
     user_email = request.json.get('email')
     
     return cur.callproc('party_create', [movie_id, time, link, user_email])
+
+@app.route('/party/add-party-users', methods=['POST'])
+def add_party_users():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    user_email = request.json.get('email')
+    party_id = request.json.get('party_id')
+    
+    return cur.callproc('party_add_user', [user_email, party_id])
 
 @app.route('/party/delete-friend', methods=['POST'])
 def del_friend():

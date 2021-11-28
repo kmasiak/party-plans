@@ -15,30 +15,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+
 import { Link, Redirect } from "react-router-dom";
-
-function createUsersData(fname, lname) {
-  return { fname, lname };
-}
-
-function onAddUsers() {
-  //
-}
-
-function onSaveParty() {
-  //
-}
-
-function onDiscardParty() {
-  //
-}
-
-const rowsUsersTable = [
-  createUsersData("Jakob", "Short"),
-  createUsersData("Sam", "Bracellari"),
-  createUsersData("Olivia", "Yee"),
-  createUsersData("Kyle", "Masiak"),
-];
 
 class PartyScreen extends Component {
   render() {
@@ -72,6 +54,11 @@ class PartyScreen extends Component {
       onRemoveParty,
       movie_id,
       movie_name,
+      partyUsers,
+      onAddUser,
+      party_id,
+      puser_open,
+      handleUemail,
     } = this.props;
 
     if (!logged_in) {
@@ -189,15 +176,15 @@ class PartyScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rowsUsersTable.map((row) => (
+                  {partyUsers.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       style={{ backgroundColor: "#f5f5f5" }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.fname}
+                        {row.f_name}
                       </TableCell>
-                      <TableCell align="center">{row.lname}</TableCell>
+                      <TableCell align="center">{row.l_name}</TableCell>
                       <TableCell align="center">
                         <Button
                           variant="contained"
@@ -214,7 +201,7 @@ class PartyScreen extends Component {
             </TableContainer>
             <br />
             <Button
-              id="addMoviesBtn"
+              id="addUsersBtn"
               style={{
                 backgroundColor: "#dc143c",
                 color: "white",
@@ -222,10 +209,35 @@ class PartyScreen extends Component {
               }}
               variant="contained"
               endIcon={<AddIcon />}
-              onClick={() => onAddUsers()}
+              onClick={() => setShowPassword(puser_open, "puo")}
             >
               Add Users
             </Button>
+            <Dialog
+              open={puser_open}
+              onClose={() => setShowPassword(puser_open, "puo")}
+            >
+              <DialogTitle>Add a User</DialogTitle>
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="User Email"
+                  type="email"
+                  fullWidth
+                  variant="standard"
+                  inputProps={{ maxLength: 45 }}
+                  onChange={handleUemail}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setShowPassword(puser_open, "puo")}>
+                  Cancel
+                </Button>
+                <Button onClick={() => onAddUser(party_id)}>Submit</Button>
+              </DialogActions>
+            </Dialog>
           </FormGroup>
         </Container>
       </div>
