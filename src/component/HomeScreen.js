@@ -325,7 +325,9 @@ class HomeScreen extends Component {
                       variant="contained"
                       style={{ backgroundColor: "#dc143c", color: "white" }}
                       endIcon={<ViewIcon />}
-                      onClick={() => onViewParty(row.event_id, row.title)}
+                      onClick={() =>
+                        onViewParty(row.event_id, row.title, row.time, row.url)
+                      }
                     >
                       View
                     </Button>

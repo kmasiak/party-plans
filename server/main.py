@@ -228,6 +228,30 @@ def del_party():
     
     return cur.callproc('party_delete', [party_id])
 
+@app.route('/party/delete-user-party', methods=['POST'])
+def del_user_party():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    user_id = request.json.get('user_id')
+    party_id = request.json.get('party_id')
+    
+    return cur.callproc('party_delete_user', [user_id, party_id])
+
+@app.route('/party/update-party-time', methods=['POST'])
+def update_party_time():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    party_id = request.json.get('party_id')
+    new_time = request.json.get('new_time')
+    
+    return cur.callproc('party_update_time', [party_id, new_time])
+
 @app.route('/party/update-element', methods=['POST'])
 def update_element():
 
