@@ -64,7 +64,6 @@ class PartyScreen extends Component {
       handlePartyTime,
       party_time,
       party_url,
-      onUpdatePartyTime,
     } = this.props;
 
     if (!logged_in) {
@@ -141,20 +140,6 @@ class PartyScreen extends Component {
                   }}
                   onChange={handlePartyTime}
                 />
-
-                <Button
-                  id="updateTimeBtn"
-                  style={{
-                    backgroundColor: "#dc143c",
-                    color: "white",
-                    alignSelf: "center",
-                  }}
-                  variant="contained"
-                  endIcon={<TimeIcon />}
-                  onClick={() => onUpdatePartyTime(party_id)}
-                >
-                  Update Time
-                </Button>
               </div>
               <br />
 

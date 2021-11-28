@@ -88,7 +88,7 @@ class App extends Component {
     party_id: 0,
     puser_open: false,
     puser_email: "",
-    review_open: false, 
+    review_open: false,
     r_rating: "0",
     r_comments: "",
     party_time: "2021-12-15T21:30",
@@ -666,7 +666,7 @@ class App extends Component {
         m_keyword: keyword,
         m_prod_comp: prod_comp,
         m_reviews: data.m_reviews,
-        movie_id: m_id
+        movie_id: m_id,
       });
     });
   };
@@ -788,7 +788,7 @@ class App extends Component {
       puser_email,
       m_reviews,
       review_open,
-      r_comments, 
+      r_comments,
       r_rating,
       party_time,
       party_url,
@@ -962,7 +962,6 @@ class App extends Component {
                 handlePartyTime={this.handlePartyTime}
                 party_time={party_time}
                 partyl_url={party_url}
-                onUpdatePartyTime={this.onUpdatePartyTime}
               />
             )}
           />
