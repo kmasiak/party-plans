@@ -7,6 +7,7 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 import SaveIcon from "@material-ui/icons/Save";
+import TimeIcon from "@material-ui/icons/Schedule";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -59,6 +60,11 @@ class PartyScreen extends Component {
       party_id,
       puser_open,
       handleUemail,
+      onRemoveUser,
+      handlePartyTime,
+      party_time,
+      party_url,
+      onUpdatePartyTime,
     } = this.props;
 
     if (!logged_in) {
@@ -118,48 +124,37 @@ class PartyScreen extends Component {
                   style={{
                     marginTop: "auto",
                     marginBottom: "auto",
+                    marginRight: "auto",
                   }}
                 >
                   Movie: {movie_name}
                 </h2>
-                {/*
+
                 <TextField
                   id="datetime-local"
                   label="Date & Time"
                   type="datetime-local"
-                  defaultValue="2021-12-15T21:30"
-                  style={{ marginRight: "auto", marginLeft: "24px" }}
+                  defaultValue={party_time}
+                  style={{ marginRight: "24px" }}
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  onChange={handlePartyTime}
                 />
-                
+
                 <Button
-                  id="saveBtn"
+                  id="updateTimeBtn"
                   style={{
                     backgroundColor: "#dc143c",
                     color: "white",
-                    margin: "5px",
+                    alignSelf: "center",
                   }}
                   variant="contained"
-                  endIcon={<SaveIcon />}
-                  onClick={() => onSaveParty()}
+                  endIcon={<TimeIcon />}
+                  onClick={() => onUpdatePartyTime(party_id)}
                 >
-                  Save Party
+                  Update Time
                 </Button>
-                <Button
-                  id="discardBtn"
-                  style={{
-                    backgroundColor: "#dc143c",
-                    color: "white",
-                    margin: "5px",
-                  }}
-                  variant="contained"
-                  endIcon={<DeleteIcon />}
-                  onClick={() => onRemoveParty(movie_id, movie_name)}
-                >
-                  Discard Party
-                </Button> */}
               </div>
               <br />
 
@@ -190,6 +185,7 @@ class PartyScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<DeleteIcon />}
+                          onClick={() => onRemoveUser(row.user_email, party_id)}
                         >
                           Delete
                         </Button>

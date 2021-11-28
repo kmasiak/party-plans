@@ -369,6 +369,30 @@ export const del_party = async (p_id) => {
   }
 };
 
+export const del_user_party = async (email, p_id) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/delete-user-party",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: email,
+          party_id: p_id,
+        }),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
 export const update_element = async (c_id, m_id) => {
   try {
     const response = await fetch("http://localhost:5000/party/update-element", {
@@ -437,6 +461,8 @@ export const get_movie_contents = async (movie_id) => {
   }
 };
 
+
+
 export const add_review = async (u_email, movie_id, rating, comments) => {
   try {
     const response = await fetch(
@@ -482,7 +508,28 @@ export const update_review = async (u_email, movie_id, rating, comments) => {
         }),
       }
     );
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
 
+export const update_party_time = async (p_id, newTime) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/update-party-time",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          party_id: p_id,
+          new_time: newTime,
+        }),
+      }
+    );
     const data = await response.json();
     return data;
   } catch (err) {
