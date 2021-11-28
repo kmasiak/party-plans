@@ -164,7 +164,7 @@ def create_party():
     cur = partydb.cursor(dictionary=True)
 
     movie_id = request.json.get('movie_id')
-    time = '2020/08/17 11:00:00'
+    time = request.json.get('party_time')
     link = 'https://google.com'
     user_email = request.json.get('email')
     
@@ -204,6 +204,17 @@ def del_element():
     movie_id = request.json.get('movie_id')
     
     return cur.callproc('element_delete', [list_id, movie_id])
+
+@app.route('/party/delete-party', methods=['POST'])
+def del_party():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    party_id = request.json.get('party_id')
+    
+    return cur.callproc('party_delete', [party_id])
 
 @app.route('/party/update-element', methods=['POST'])
 def update_element():

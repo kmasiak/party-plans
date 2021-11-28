@@ -45,9 +45,11 @@ class HomeScreen extends Component {
       handleCollectionName,
       onRemoveFriend,
       onRemoveCollection,
+      onRemoveParty,
       onViewFriend,
       friend_email,
       onViewCollection,
+      onViewParty,
     } = this.props;
 
     if (!logged_in) {
@@ -318,9 +320,12 @@ class HomeScreen extends Component {
                   </TableCell>
                   <TableCell align="center">
                     <Button
+                      component={Link}
+                      to="/view-party"
                       variant="contained"
                       style={{ backgroundColor: "#dc143c", color: "white" }}
                       endIcon={<ViewIcon />}
+                      onClick={() => onViewParty(row.event_id, row.title)}
                     >
                       View
                     </Button>
@@ -330,6 +335,7 @@ class HomeScreen extends Component {
                       variant="contained"
                       style={{ backgroundColor: "#dc143c", color: "white" }}
                       endIcon={<DeleteIcon />}
+                      onClick={() => onRemoveParty(row.event_id, row.title)}
                     >
                       Delete
                     </Button>

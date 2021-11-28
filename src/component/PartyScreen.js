@@ -15,9 +15,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
-import { Link } from "react-router-dom";
-
-const movieTitle = "Shrek";
+import { Link, Redirect } from "react-router-dom";
 
 function createUsersData(fname, lname) {
   return { fname, lname };
@@ -42,7 +40,7 @@ const rowsUsersTable = [
   createUsersData("Kyle", "Masiak"),
 ];
 
-class CreatePartyScreen extends Component {
+class PartyScreen extends Component {
   render() {
     const {
       friends,
@@ -71,7 +69,15 @@ class CreatePartyScreen extends Component {
       onRemoveElement,
       onUpdateElement,
       onCreateParty,
+      onRemoveParty,
+      movie_id,
+      movie_name,
     } = this.props;
+
+    if (!logged_in) {
+      return <Redirect to="/" />;
+    }
+
     return (
       <div>
         <div
@@ -91,7 +97,7 @@ class CreatePartyScreen extends Component {
               marginRight: "auto",
             }}
           >
-            Create Party
+            View Party
           </h1>
 
           <Button
@@ -127,9 +133,9 @@ class CreatePartyScreen extends Component {
                     marginBottom: "auto",
                   }}
                 >
-                  Movie: {movieTitle}
+                  Movie: {movie_name}
                 </h2>
-
+                {/*
                 <TextField
                   id="datetime-local"
                   label="Date & Time"
@@ -140,6 +146,7 @@ class CreatePartyScreen extends Component {
                     shrink: true,
                   }}
                 />
+                
                 <Button
                   id="saveBtn"
                   style={{
@@ -162,10 +169,10 @@ class CreatePartyScreen extends Component {
                   }}
                   variant="contained"
                   endIcon={<DeleteIcon />}
-                  onClick={() => onDiscardParty()}
+                  onClick={() => onRemoveParty(movie_id, movie_name)}
                 >
                   Discard Party
-                </Button>
+                </Button> */}
               </div>
               <br />
 
@@ -226,4 +233,4 @@ class CreatePartyScreen extends Component {
   }
 }
 
-export default CreatePartyScreen;
+export default PartyScreen;

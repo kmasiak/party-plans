@@ -173,7 +173,7 @@ export const add_collection = async (user_email, collection_name) => {
   }
 };
 
-export const create_party = async (user_email, movie_id) => {
+export const create_party = async (user_email, movie_id, party_time) => {
   try {
     const response = await fetch("http://localhost:5000/party/create-party", {
       method: "POST",
@@ -184,6 +184,7 @@ export const create_party = async (user_email, movie_id) => {
       body: JSON.stringify({
         email: user_email,
         movie_id: movie_id,
+        party_time: party_time,
       }),
     });
 
@@ -241,7 +242,11 @@ export const view_collection = async (collection_id) => {
   }
 };
 
-export const duplicate_collection = async (email, collection_name, collection_id) => {
+export const duplicate_collection = async (
+  email,
+  collection_name,
+  collection_id
+) => {
   try {
     const response = await fetch(
       "http://localhost:5000/party/duplicate-collection",
@@ -309,6 +314,26 @@ export const del_element = async (c_id, m_id) => {
       body: JSON.stringify({
         collection_id: c_id,
         movie_id: m_id,
+      }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
+export const del_party = async (p_id) => {
+  try {
+    const response = await fetch("http://localhost:5000/party/delete-party", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        party_id: p_id,
       }),
     });
     const data = await response.json();

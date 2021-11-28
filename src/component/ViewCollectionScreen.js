@@ -4,7 +4,7 @@ import "../css/HomeScreen.css";
 import { Button, Checkbox, Container, FormGroup } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EventIcon from "@material-ui/icons/Event";
 import LinkIcon from "@material-ui/icons/Link";
 import ListIcon from "@material-ui/icons/List";
@@ -63,7 +63,10 @@ class ViewCollectionScreen extends Component {
       onCreateParty,
       renderMovieSearch,
       friend_collection,
-      onDuplicateCollection
+      onDuplicateCollection,
+      party_open,
+      handlePartyTime,
+      onPartyDialog,
     } = this.props;
 
     if (!logged_in) {
@@ -122,9 +125,11 @@ class ViewCollectionScreen extends Component {
                     <TableCell align="left" style={{ color: "white" }}>
                       Release Date
                     </TableCell>
-                    {!friend_collection && <TableCell align="left" style={{ color: "white" }}>
-                      Watched
-                    </TableCell>}
+                    {!friend_collection && (
+                      <TableCell align="left" style={{ color: "white" }}>
+                        Watched
+                      </TableCell>
+                    )}
                     {!friend_collection && <TableCell />}
                     {!friend_collection && <TableCell />}
                     <TableCell />
@@ -145,14 +150,16 @@ class ViewCollectionScreen extends Component {
                       <TableCell component="th" scope="row">
                         {new Date(row.release_date).toDateString()}
                       </TableCell>
-                      {!friend_collection && <TableCell align="center">
-                        <Checkbox
-                          onChange={() =>
-                            onUpdateElement(row.list_id, row.movie_id)
-                          }
-                          checked={row.watched}
-                        />
-                      </TableCell>}
+                      {!friend_collection && (
+                        <TableCell align="center">
+                          <Checkbox
+                            onChange={() =>
+                              onUpdateElement(row.list_id, row.movie_id)
+                            }
+                            checked={row.watched}
+                          />
+                        </TableCell>
+                      )}
                       <TableCell align="center">
                         <Button
                           variant="contained"
@@ -165,63 +172,107 @@ class ViewCollectionScreen extends Component {
                           View
                         </Button>
                       </TableCell>
-                      {!friend_collection && <TableCell align="center">
-                        <Button
-                          component={Link}
-                          to="/create-party"
-                          variant="contained"
-                          style={{ backgroundColor: "#dc143c", color: "white" }}
-                          endIcon={<EventIcon />}
-                          onClick={() => onCreateParty(row.movie_id)}
-                        >
-                          Create Party
-                        </Button>
-                      </TableCell>}
-                      {!friend_collection && <TableCell align="center">
-                        <Button
-                          variant="contained"
-                          style={{ backgroundColor: "#dc143c", color: "white" }}
-                          endIcon={<DeleteIcon />}
-                          onClick={() =>
-                            onRemoveElement(row.list_id, row.movie_id)
-                          }
-                        >
-                          Delete
-                        </Button>
-                      </TableCell>}
+                      {!friend_collection && (
+                        <TableCell align="center">
+                          <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#dc143c",
+                              color: "white",
+                            }}
+                            endIcon={<EventIcon />}
+                            onClick={() => onPartyDialog(row.movie_id)}
+                          >
+                            Create Party
+                          </Button>
+                          <Dialog
+                            open={party_open}
+                            onClose={() => setShowPassword(party_open, "po")}
+                          >
+                            <DialogTitle>Create a Party</DialogTitle>
+                            <DialogContent>
+                              <text>Set a time for the party:</text>
+                              <br />
+                              <br />
+                              <TextField
+                                id="datetime-local"
+                                label="Date & Time"
+                                type="datetime-local"
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
+                                onChange={handlePartyTime}
+                              />
+                            </DialogContent>
+                            <DialogActions>
+                              <Button
+                                onClick={() =>
+                                  setShowPassword(party_open, "po")
+                                }
+                              >
+                                Cancel
+                              </Button>
+                              <Button onClick={() => onCreateParty()}>
+                                Submit
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+                        </TableCell>
+                      )}
+                      {!friend_collection && (
+                        <TableCell align="center">
+                          <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#dc143c",
+                              color: "white",
+                            }}
+                            endIcon={<DeleteIcon />}
+                            onClick={() =>
+                              onRemoveElement(row.list_id, row.movie_id)
+                            }
+                          >
+                            Delete
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
             <br />
-            {!friend_collection ? <Button
-              id="addMoviesBtn"
-              style={{
-                backgroundColor: "#dc143c",
-                color: "white",
-                alignSelf: "center",
-              }}
-              variant="contained"
-              endIcon={<AddIcon />}
-              onClick={() => onMovieSearch(true)}
-              component={Link}
-              to="/movies"
-            >
-              Add Movies
-            </Button> : <Button
-              id="addMoviesBtn"
-              style={{
-                backgroundColor: "#dc143c",
-                color: "white",
-                alignSelf: "center",
-              }}
-              variant="contained"
-              endIcon={<ContentCopyIcon />}
-              onClick={() => setShowPassword(collection_open, "co")}
-            >
-              Duplicate Collection
-            </Button>}
+            {!friend_collection ? (
+              <Button
+                id="addMoviesBtn"
+                style={{
+                  backgroundColor: "#dc143c",
+                  color: "white",
+                  alignSelf: "center",
+                }}
+                variant="contained"
+                endIcon={<AddIcon />}
+                onClick={() => onMovieSearch(true)}
+                component={Link}
+                to="/movies"
+              >
+                Add Movies
+              </Button>
+            ) : (
+              <Button
+                id="addMoviesBtn"
+                style={{
+                  backgroundColor: "#dc143c",
+                  color: "white",
+                  alignSelf: "center",
+                }}
+                variant="contained"
+                endIcon={<ContentCopyIcon />}
+                onClick={() => setShowPassword(collection_open, "co")}
+              >
+                Duplicate Collection
+              </Button>
+            )}
             <Dialog
               open={collection_open}
               onClose={() => setShowPassword(collection_open, "co")}
