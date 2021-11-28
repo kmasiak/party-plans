@@ -436,3 +436,57 @@ export const get_movie_contents = async (movie_id) => {
     return "ERR " + err;
   }
 };
+
+export const add_review = async (u_email, movie_id, rating, comments) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/add-review",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_email: u_email,
+          v_movie_id: movie_id,
+          v_rating: rating,
+          v_comments: comments
+        }),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
+export const update_review = async (u_email, movie_id, rating, comments) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/update-review",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_email: u_email,
+          v_movie_id: movie_id,
+          v_rating: rating,
+          v_comments: comments
+        }),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};

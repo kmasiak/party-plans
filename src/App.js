@@ -32,6 +32,8 @@ import {
   get_movie_contents,
   duplicate_collection,
   add_party_users,
+  add_review,
+  update_review
 } from "./api/api";
 import { duration } from "@material-ui/core";
 
@@ -71,6 +73,7 @@ class App extends Component {
     m_genre: [],
     m_keyword: [],
     m_prod_comp: [],
+    m_reviews: [],
     movies: [],
     movie_id: 0,
     movie_name: "",
@@ -84,6 +87,9 @@ class App extends Component {
     party_id: 0,
     puser_open: false,
     puser_email: "",
+    review_open: false, 
+    r_rating: "0",
+    r_comments: ""
   };
 
   getPosterLink = (m_id) => {
@@ -92,6 +98,14 @@ class App extends Component {
         poster_link: data.poster_link,
       });
     });
+  };
+
+  handleRating = (event) => {
+    this.setState({ r_rating: String(event.target.value) });
+  };
+
+  handleComments = (event) => {
+    this.setState({ r_comments: event.target.value });
   };
 
   handleEmail = (event) => {
@@ -169,6 +183,8 @@ class App extends Component {
       this.setState({ movie_open: !bool_val });
     } else if (name === "puo") {
       this.setState({ puser_open: !bool_val });
+    } else if (name === "ro") {
+      this.setState({ review_open: !bool_val });
     } else {
       this.setState({ showPassword: !bool_val });
     }
@@ -603,6 +619,8 @@ class App extends Component {
         m_genre: genre,
         m_keyword: keyword,
         m_prod_comp: prod_comp,
+        m_reviews: data.m_reviews,
+        movie_id: m_id
       });
     });
   };
@@ -627,6 +645,50 @@ class App extends Component {
           }
         }
       );
+    }
+  };
+
+  onAddReview = () => {
+    const user_id = this.state.email;
+    const m_id = this.state.movie_id;
+    const rating = this.state.r_rating;
+    const comments = this.state.r_comments;
+
+    if (rating === "" || comments === "") {
+      alert("Please fill in all required fields.");
+    } else {
+      add_review(user_id, m_id, rating, comments).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Something went wrong");
+        } else {
+          if (this.state.review_open) {
+            this.setShowPassword(this.state.review_open, "ro");
+          }
+          this.onViewMovie(m_id);
+        }
+      });
+    }
+  };
+
+  onUpdateReview = () => {
+    const user_id = this.state.email;
+    const m_id = this.state.movie_id;
+    const rating = this.state.r_rating;
+    const comments = this.state.r_comments;
+
+    if (rating === "" || comments === "") {
+      alert("Please fill in all required fields.");
+    } else {
+      update_review(user_id, m_id, rating, comments).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Something went wrong");
+        } else {
+          if (this.state.review_open) {
+            this.setShowPassword(this.state.review_open, "ro");
+          }
+          this.onViewMovie(m_id);
+        }
+      });
     }
   };
 
@@ -678,6 +740,10 @@ class App extends Component {
       party_id,
       puser_open,
       puser_email,
+      m_reviews,
+      review_open,
+      r_comments, 
+      r_rating
     } = this.state;
 
     return (
@@ -863,6 +929,15 @@ class App extends Component {
                 m_genre={m_genre}
                 m_keyword={m_keyword}
                 m_prod_comp={m_prod_comp}
+                m_reviews={m_reviews}
+                review_open={review_open}
+                r_rating={r_rating}
+                r_comments={r_comments}
+                setShowPassword={this.setShowPassword}
+                onAddReview={this.onAddReview}
+                handleRating={this.handleRating}
+                handleComments={this.handleComments}
+                onUpdateReview={this.onUpdateReview}
               />
             )}
           />
