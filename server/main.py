@@ -156,6 +156,34 @@ def add_element():
     
     return cur.callproc('element_add', [list_id, movie_id, hasWatched])
 
+@app.route('/party/add-review', methods=['POST'])
+def add_review():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    u_email = request.json.get('user_email')
+    movie_id = request.json.get('v_movie_id')
+    rating = request.json.get('v_rating')
+    comments = request.json.get('v_comments')
+    
+    return cur.callproc('review_create', [u_email, movie_id, rating, comments])
+
+@app.route('/party/update-review', methods=['POST'])
+def update_review():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    u_email = request.json.get('user_email')
+    movie_id = request.json.get('v_movie_id')
+    rating = request.json.get('v_rating')
+    comments = request.json.get('v_comments')
+    
+    return cur.callproc('review_update', [u_email, movie_id, rating, comments])
+
 @app.route('/party/create-party', methods=['POST'])
 def create_party():
 
@@ -308,7 +336,7 @@ def get_movie_contents():
 
     movie_id = request.json.get('movie_id')
 
-    contents = []
+    contents, reviews = [], []
 
     cur.callproc('get_movie_details', [movie_id])
 
@@ -340,8 +368,15 @@ def get_movie_contents():
         for row in set:
             contents.append(dict(zip(set.column_names,row)))
 
+    cur.callproc('get_movie_reviews', [movie_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            reviews.append(dict(zip(set.column_names,row)))
+
     return jsonify({
         'm_contents': contents,
+        'm_reviews': reviews
     })
 
 @app.route('/health-check', methods=['GET'])
