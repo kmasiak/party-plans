@@ -64,6 +64,8 @@ class PartyScreen extends Component {
       handlePartyTime,
       party_time,
       party_url,
+      recUsers,
+      onAddRecUser,
     } = this.props;
 
     if (!logged_in) {
@@ -216,9 +218,58 @@ class PartyScreen extends Component {
                 <Button onClick={() => setShowPassword(puser_open, "puo")}>
                   Cancel
                 </Button>
-                <Button onClick={() => onAddUser(party_id)}>Submit</Button>
+                <Button onClick={() => onAddUser(party_id, "")}>Submit</Button>
               </DialogActions>
             </Dialog>
+
+            <br />
+
+            <TableContainer
+              sx={{ marginRight: "auto", marginLeft: "auto", width: "80%" }}
+            >
+              <h3
+                style={{
+                  marginTop: "auto",
+                  marginBottom: "auto",
+                  marginRight: "auto",
+                }}
+              >
+                Recommended Users to Add to Party
+              </h3>
+              <Table>
+                <TableHead>
+                  <TableRow style={{ backgroundColor: "#dc143c" }}>
+                    <TableCell align="left" style={{ color: "white" }}>
+                      Email
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {recUsers.map((row) => (
+                    <TableRow
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      style={{ backgroundColor: "#f5f5f5" }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.user_email1}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          variant="contained"
+                          style={{ backgroundColor: "#dc143c", color: "white" }}
+                          endIcon={<AddIcon />}
+                          onClick={() => onAddRecUser(row.user_email1)}
+                          //onClick={() => onRemoveUser(row.user_email, party_id)}
+                        >
+                          Add User
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </FormGroup>
         </Container>
       </div>
