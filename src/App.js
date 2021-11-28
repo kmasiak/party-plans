@@ -36,6 +36,7 @@ import {
   update_review,
   del_user_party,
   update_party_time,
+  get_recommended_users,
 } from "./api/api";
 import { duration } from "@material-ui/core";
 
@@ -93,6 +94,7 @@ class App extends Component {
     r_comments: "",
     party_time: "2021-12-15T21:30",
     party_url: "",
+    recUsers: [],
   };
 
   getPosterLink = (m_id) => {
@@ -519,6 +521,7 @@ class App extends Component {
 
   onViewParty = (p_id, m_title, p_time, p_url) => {
     const v_party_users = p_id;
+    const email = this.state.email;
 
     this.setState({
       movie_name: m_title,
@@ -535,6 +538,12 @@ class App extends Component {
           partyUsers: data.party_users,
         });
       }
+    });
+
+    get_recommended_users(email, p_id).then((data) => {
+      this.setState({
+        recUsers: data.rec_users,
+      });
     });
   };
 
@@ -556,8 +565,12 @@ class App extends Component {
     }
   };
 
-  onAddUser = (p_id) => {
-    const user_id = this.state.puser_email;
+  onAddUser = (p_id, user_id) => {
+    var dialog = false;
+    if (user_id === "") {
+      user_id = this.state.puser_email;
+      dialog = true;
+    }
 
     console.log(user_id);
 
@@ -566,7 +579,9 @@ class App extends Component {
         alert("Invalid email");
       } else {
         alert("User added!");
-        this.setShowPassword(this.state.puser_open, "puo");
+        if (dialog) {
+          this.setShowPassword(this.state.puser_open, "puo");
+        }
         get_party_users(p_id).then((data) => {
           if (!data) {
             alert("Uh oh, something went wrong!");
@@ -575,6 +590,11 @@ class App extends Component {
               partyUsers: data.party_users,
             });
           }
+        });
+        get_recommended_users(user_id, p_id).then((data) => {
+          this.setState({
+            recUsers: data.rec_users,
+          });
         });
       }
     });
@@ -598,11 +618,27 @@ class App extends Component {
               });
             }
           });
+          get_recommended_users(email, p_id).then((data) => {
+            console.log(data.rec_users);
+            this.setState({
+              recUsers: data.rec_users,
+            });
+          });
         }
       });
     } else {
       alert("Delete Cancelled!");
     }
+  };
+
+  onAddRecUser = (user_email) => {
+    const p_id = this.state.party_id;
+
+    this.setState({
+      puser_email: user_email,
+    });
+
+    this.onAddUser(p_id, user_email);
   };
 
   onUpdatePartyTime = (newTime) => {
@@ -792,6 +828,7 @@ class App extends Component {
       r_rating,
       party_time,
       party_url,
+      recUsers,
     } = this.state;
 
     return (
@@ -962,6 +999,8 @@ class App extends Component {
                 handlePartyTime={this.handlePartyTime}
                 party_time={party_time}
                 partyl_url={party_url}
+                recUsers={recUsers}
+                onAddRecUser={this.onAddRecUser}
               />
             )}
           />

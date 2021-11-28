@@ -403,6 +403,29 @@ def get_movie_contents():
         'm_reviews': reviews
     })
 
+@app.route('/party/get-recommended-users', methods=['POST']) 
+def get_recommended_users():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    email = request.json.get('email')
+    party_id = request.json.get('party_id')
+
+    users = []
+
+    cur.callproc('get_recommended_users', [email, party_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            users.append(dict(zip(set.column_names,row)))
+
+    return jsonify({
+        'rec_users': users,
+    })
+
+
 @app.route('/health-check', methods=['GET'])
 def heatlhcheck():
     return 'REEEEEEEE'

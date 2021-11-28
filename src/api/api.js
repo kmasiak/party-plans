@@ -461,26 +461,21 @@ export const get_movie_contents = async (movie_id) => {
   }
 };
 
-
-
 export const add_review = async (u_email, movie_id, rating, comments) => {
   try {
-    const response = await fetch(
-      "http://localhost:5000/party/add-review",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_email: u_email,
-          v_movie_id: movie_id,
-          v_rating: rating,
-          v_comments: comments
-        }),
-      }
-    );
+    const response = await fetch("http://localhost:5000/party/add-review", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_email: u_email,
+        v_movie_id: movie_id,
+        v_rating: rating,
+        v_comments: comments,
+      }),
+    });
 
     const data = await response.json();
     return data;
@@ -492,22 +487,19 @@ export const add_review = async (u_email, movie_id, rating, comments) => {
 
 export const update_review = async (u_email, movie_id, rating, comments) => {
   try {
-    const response = await fetch(
-      "http://localhost:5000/party/update-review",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_email: u_email,
-          v_movie_id: movie_id,
-          v_rating: rating,
-          v_comments: comments
-        }),
-      }
-    );
+    const response = await fetch("http://localhost:5000/party/update-review", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_email: u_email,
+        v_movie_id: movie_id,
+        v_rating: rating,
+        v_comments: comments,
+      }),
+    });
   } catch (err) {
     console.log("ERR ", err);
     return "ERR " + err;
@@ -527,6 +519,30 @@ export const update_party_time = async (p_id, newTime) => {
         body: JSON.stringify({
           party_id: p_id,
           new_time: newTime,
+        }),
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log("ERR ", err);
+    return "ERR " + err;
+  }
+};
+
+export const get_recommended_users = async (user_email, p_id) => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/party/get-recommended-users",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user_email,
+          party_id: p_id,
         }),
       }
     );
