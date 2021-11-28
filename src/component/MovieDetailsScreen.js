@@ -11,7 +11,7 @@ import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
 import TextField from "@mui/material/TextField";
-import Rating from '@mui/material/Rating';
+import Rating from "@mui/material/Rating";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 
@@ -91,7 +91,7 @@ class MovieDetailsScreen extends Component {
       onAddReview,
       handleRating,
       handleComments,
-      onUpdateReview
+      onUpdateReview,
     } = this.props;
 
     if (!logged_in) {
@@ -165,60 +165,51 @@ class MovieDetailsScreen extends Component {
               </div>
             </div>
             <br />
-          </FormGroup>
-        </Container>
-        <TableContainer
-              component={Paper}
-              style={{ marginRight: "auto", marginLeft: "auto", width: "50%" }}
+
+            <Button
+              id="addReviewBtn"
+              style={{
+                backgroundColor: "#dc143c",
+                color: "white",
+                alignSelf: "center",
+              }}
+              variant="contained"
+              endIcon={<AddIcon />}
+              onClick={() => setShowPassword(review_open, "ro")}
             >
-              <Table>
-                <TableHead>
-                  <TableRow style={{ backgroundColor: "#dc143c" }}>
-                    <TableCell align="left" style={{ color: "white" }}>
-                      Rating
-                    </TableCell>
-                    <TableCell align="left" style={{ color: "white" }}>
-                      Comments
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {m_reviews.map((row) => (
-                    <TableRow
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                      style={{ backgroundColor: "#f5f5f5" }}
-                    >
-                      <TableCell component="th" scope="row">
-                        <Rating
-                          name="simple-controlled"
-                          value={parseInt(row.rating)}
-                          readOnly 
-                        />
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {row.comments}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <br />
-            <Container margin="auto">
-              <Button
-                  id="addReviewBtn"
-                  style={{
-                    backgroundColor: "#dc143c",
-                    color: "white",
-                    alignSelf: 'center'
-                  }}
-                  variant="contained"
-                  endIcon={<AddIcon />}
-                  onClick={() => setShowPassword(review_open, "ro")}
-                >
-                  Add Review
+              Add Review
+            </Button>
+            <Dialog
+              open={review_open}
+              onClose={() => setShowPassword(review_open, "ro")}
+            >
+              <DialogTitle>Update a Review</DialogTitle>
+              <DialogContent>
+                <Rating
+                  name="simple-controlled"
+                  value={parseInt(r_rating)}
+                  onChange={handleRating}
+                />
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Comments"
+                  type="text"
+                  fullWidth
+                  variant="standard"
+                  inputProps={{ maxLength: 200 }}
+                  onChange={handleComments}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setShowPassword(review_open, "ro")}>
+                  Cancel
                 </Button>
-                <Button
+                <Button onClick={onUpdateReview}>Submit</Button>
+              </DialogActions>
+            </Dialog>
+            {/*<Button
                   id="addReviewBtn"
                   style={{
                     backgroundColor: "#dc143c",
@@ -230,38 +221,46 @@ class MovieDetailsScreen extends Component {
                   onClick={() => setShowPassword(review_open, "ro")}
                 >
                   Update Review
-                </Button>
-              </Container>
-                <Dialog
-                  open={review_open}
-                  onClose={() => setShowPassword(review_open, "ro")}
+                </Button>*/}
+          </FormGroup>
+        </Container>
+        <br />
+        <TableContainer
+          component={Paper}
+          style={{ marginRight: "auto", marginLeft: "auto", width: "50%" }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow style={{ backgroundColor: "#dc143c" }}>
+                <TableCell align="left" style={{ color: "white" }}>
+                  Rating
+                </TableCell>
+                <TableCell align="left" style={{ color: "white" }}>
+                  Comments
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {m_reviews.map((row) => (
+                <TableRow
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  style={{ backgroundColor: "#f5f5f5" }}
                 >
-                  <DialogTitle>Update a Review</DialogTitle>
-                  <DialogContent>
+                  <TableCell component="th" scope="row">
                     <Rating
                       name="simple-controlled"
-                      value={parseInt(r_rating)}
-                      onChange={handleRating}
+                      value={parseInt(row.rating)}
+                      readOnly
                     />
-                    <TextField
-                      autoFocus
-                      margin="dense"
-                      id="name"
-                      label="Comments"
-                      type="text"
-                      fullWidth
-                      variant="standard"
-                      inputProps={{ maxLength: 200 }}
-                      onChange={handleComments}
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={() => setShowPassword(review_open, "ro")}>
-                      Cancel
-                    </Button>
-                    <Button onClick={onUpdateReview}>Submit</Button>
-                  </DialogActions>
-                </Dialog>
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.comments}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     );
   }
