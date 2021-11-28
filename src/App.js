@@ -33,7 +33,9 @@ import {
   duplicate_collection,
   add_party_users,
   add_review,
-  update_review
+  update_review,
+  del_user_party,
+  update_party_time,
 } from "./api/api";
 import { duration } from "@material-ui/core";
 
@@ -81,7 +83,6 @@ class App extends Component {
     emails: [],
     movie_ids: [],
     party_open: false,
-    party_time: "",
     poster_link: "",
     friend_collection: false,
     party_id: 0,
@@ -89,7 +90,9 @@ class App extends Component {
     puser_email: "",
     review_open: false, 
     r_rating: "0",
-    r_comments: ""
+    r_comments: "",
+    party_time: "2021-12-15T21:30",
+    party_url: "",
   };
 
   getPosterLink = (m_id) => {
@@ -163,7 +166,7 @@ class App extends Component {
   };
 
   handlePartyTime = (event) => {
-    this.setState({ party_time: event.target.value });
+    this.onUpdatePartyTime(event.target.value);
   };
 
   handleUemail = (event) => {
@@ -514,14 +517,14 @@ class App extends Component {
     }
   };
 
-  onViewParty = (p_id, m_title) => {
-    const user_id = this.state.email;
+  onViewParty = (p_id, m_title, p_time, p_url) => {
     const v_party_users = p_id;
-    const v_time = this.state.party_time;
 
     this.setState({
       movie_name: m_title,
       party_id: p_id,
+      party_time: new Date(p_time).toISOString().slice(0, 16),
+      party_url: p_url,
     });
 
     get_party_users(v_party_users).then((data) => {
@@ -573,6 +576,49 @@ class App extends Component {
             });
           }
         });
+      }
+    });
+  };
+
+  onRemoveUser = (email, p_id) => {
+    var r = window.confirm("Delete user from party?");
+
+    if (r) {
+      del_user_party(email, p_id).then((data) => {
+        if (!data) {
+          alert("Uh oh, something went wrong!");
+        } else {
+          alert("User removed!");
+          get_party_users(p_id).then((data) => {
+            if (!data) {
+              alert("Uh oh, something went wrong!");
+            } else {
+              this.setState({
+                partyUsers: data.party_users,
+              });
+            }
+          });
+        }
+      });
+    } else {
+      alert("Delete Cancelled!");
+    }
+  };
+
+  onUpdatePartyTime = (newTime) => {
+    const email = this.state.email;
+    const p_id = this.state.party_id;
+
+    this.setState({
+      party_time: newTime,
+    });
+
+    update_party_time(p_id, newTime).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        alert("Party time was updated to " + newTime);
+        this.makeUserTables(email);
       }
     });
   };
@@ -743,7 +789,9 @@ class App extends Component {
       m_reviews,
       review_open,
       r_comments, 
-      r_rating
+      r_rating,
+      party_time,
+      party_url,
     } = this.state;
 
     return (
@@ -910,6 +958,11 @@ class App extends Component {
                 puser_open={puser_open}
                 handleUemail={this.handleUemail}
                 setShowPassword={this.setShowPassword}
+                onRemoveUser={this.onRemoveUser}
+                handlePartyTime={this.handlePartyTime}
+                party_time={party_time}
+                partyl_url={party_url}
+                onUpdatePartyTime={this.onUpdatePartyTime}
               />
             )}
           />
