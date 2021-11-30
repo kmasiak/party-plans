@@ -50,6 +50,7 @@ class HomeScreen extends Component {
       friend_email,
       onViewCollection,
       onViewParty,
+      toEST,
     } = this.props;
 
     if (!logged_in) {
@@ -307,7 +308,7 @@ class HomeScreen extends Component {
                   <TableCell component="th" scope="row">
                     {row.title}
                   </TableCell>
-                  <TableCell align="left">{row.time}</TableCell>
+                  <TableCell align="left">{toEST(row.time)}</TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"
