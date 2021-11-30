@@ -58,6 +58,7 @@ class App extends Component {
     last_name: "",
     collection_id: "",
     collection_name: "",
+    dcollection_name: "",
     collection_open: false,
     friend_email: "",
     friend_open: false,
@@ -95,7 +96,7 @@ class App extends Component {
     party_time: "2021-12-15T21:30",
     party_url: "",
     recUsers: [],
-    rev_emails: []
+    rev_emails: [],
   };
 
   getPosterLink = (m_id) => {
@@ -138,6 +139,10 @@ class App extends Component {
   handleCollectionName = (event) => {
     console.log(this.state.collection_name);
     this.setState({ collection_name: event.target.value });
+  };
+
+  handleDCollectionName = (event) => {
+    this.setState({ dcollection_name: event.target.value });
   };
 
   handleTitle = (event) => {
@@ -573,7 +578,7 @@ class App extends Component {
       dialog = true;
     }
 
-    const my_email = this.state.email
+    const my_email = this.state.email;
 
     console.log(user_id);
 
@@ -606,7 +611,7 @@ class App extends Component {
   onRemoveUser = (email, p_id) => {
     var r = window.confirm("Delete user from party?");
 
-    const my_email = this.state.email
+    const my_email = this.state.email;
 
     if (r) {
       del_user_party(email, p_id).then((data) => {
@@ -716,14 +721,14 @@ class App extends Component {
         m_prod_comp: prod_comp,
         m_reviews: data.m_reviews,
         movie_id: m_id,
-        rev_emails: email_list
+        rev_emails: email_list,
       });
     });
   };
 
   onDuplicateCollection = () => {
     const u_email = this.state.email;
-    const v_collection_name = this.state.collection_name;
+    const v_collection_name = this.state.dcollection_name;
     const v_collection_id = this.state.collection_id;
     const user_id = this.state.email;
 
@@ -788,6 +793,32 @@ class App extends Component {
     }
   };
 
+  toEST = (date) => {
+    var x = date.split(" ");
+    var twelve = Number(x[4].split(":")[0]);
+    var ampm = "AM";
+    if (twelve > 12) {
+      twelve = twelve - 12;
+      ampm = "PM";
+    }
+    return (
+      x[0] +
+      " " +
+      x[1] +
+      " " +
+      x[2] +
+      " " +
+      x[3] +
+      " " +
+      String(twelve) +
+      ":" +
+      x[4].split(":")[1] +
+      " " +
+      ampm +
+      " EST"
+    );
+  };
+
   render() {
     const {
       friends,
@@ -801,6 +832,7 @@ class App extends Component {
       password,
       first_name,
       collection_name,
+      dcollection_name,
       collection_open,
       friend_email,
       friend_open,
@@ -843,7 +875,7 @@ class App extends Component {
       party_time,
       party_url,
       recUsers,
-      rev_emails
+      rev_emails,
     } = this.state;
 
     return (
@@ -907,6 +939,7 @@ class App extends Component {
                 onViewFriend={this.onViewFriend}
                 onViewCollection={this.onViewCollection}
                 onViewParty={this.onViewParty}
+                toEST={this.toEST}
               />
             )}
           />
@@ -955,6 +988,8 @@ class App extends Component {
                 onDuplicateCollection={this.onDuplicateCollection}
                 collection_open={collection_open}
                 handleCollectionName={this.handleCollectionName}
+                dcollection_name={dcollection_name}
+                handleDCollectionName={this.handleDCollectionName}
                 party_open={party_open}
                 handlePartyTime={this.handlePartyTime}
               />

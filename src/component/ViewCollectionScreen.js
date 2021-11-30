@@ -48,7 +48,7 @@ class ViewCollectionScreen extends Component {
       handleFemail,
       onAddFriend,
       onAddCollection,
-      handleCollectionName,
+      handleDCollectionName,
       onRemoveFriend,
       onRemoveCollection,
       onViewFriend,
@@ -288,7 +288,7 @@ class ViewCollectionScreen extends Component {
                   fullWidth
                   variant="standard"
                   inputProps={{ maxLength: 45 }}
-                  onChange={handleCollectionName}
+                  onChange={handleDCollectionName}
                 />
               </DialogContent>
               <DialogActions>
