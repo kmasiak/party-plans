@@ -663,7 +663,7 @@ class App extends Component {
       if (!data) {
         alert("Uh oh, something went wrong!");
       } else {
-        alert("Party time was updated to " + newTime);
+        //alert("Party time was updated to " + newTime);
         this.makeUserTables(email);
       }
     });
