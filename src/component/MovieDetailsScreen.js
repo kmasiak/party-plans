@@ -3,17 +3,9 @@ import "../css/HomeScreen.css";
 
 import { Button, Container, FormGroup } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EventIcon from "@material-ui/icons/Event";
-import LinkIcon from "@material-ui/icons/Link";
-import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import ViewIcon from "@material-ui/icons/Visibility";
 import TextField from "@mui/material/TextField";
 import Rating from "@mui/material/Rating";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import EditIcon from '@mui/icons-material/Edit';
 
 import PartyPlans from "../images/party-plans.png";
@@ -32,38 +24,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { Link, Redirect } from "react-router-dom";
-import { integerPropType } from "@mui/utils";
 
 class MovieDetailsScreen extends Component {
   render() {
     const {
-      friends,
-      parties,
-      collections,
-      collectionElements,
-      first_name,
       logged_in,
       onLogout,
-      collection_open,
-      friend_open,
       setShowPassword,
-      handleFemail,
-      onAddFriend,
-      onAddCollection,
-      handleCollectionName,
-      onRemoveFriend,
-      onRemoveCollection,
-      onViewFriend,
-      friend_email,
-      onViewMovie,
-      collection_id,
-      collection_name,
-      f_title,
-      f_director,
-      f_actor,
-      f_genre,
-      f_keyword,
-      f_prod_comp,
       m_title,
       m_director,
       m_duration,
@@ -72,23 +39,10 @@ class MovieDetailsScreen extends Component {
       m_genre,
       m_keyword,
       m_prod_comp,
-      movies,
-      onMovieSearch,
-      handleTitle,
-      handleDirector,
-      handleActor,
-      handleGenre,
-      handleKeyword,
-      handleProd,
-      movie_open,
-      handleCollectionId,
-      onAddElement,
-      onShowMovie,
       poster_link,
       m_reviews,
       review_open,
       r_rating,
-      r_comments,
       onAddReview,
       handleRating,
       handleComments,
@@ -169,7 +123,7 @@ class MovieDetailsScreen extends Component {
             </div>
             <br />
 
-            {rev_emails.some(x => x == email) ? (
+            {rev_emails.some(x => x === email) ? (
             <Container maxWidth="sm">
               <Button
                 id="updateReviewBtn"
