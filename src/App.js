@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 
-import CreateCollectionScreen from "./component/CreateCollectionScreen";
 import PartyScreen from "./component/PartyScreen";
-import CreateReviewScreen from "./component/CreateReviewScreen";
 import HomeScreen from "./component/HomeScreen";
 import LoginScreen from "./component/LoginScreen";
 import RegisterScreen from "./component/RegisterScreen";
@@ -10,7 +8,7 @@ import FriendScreen from "./component/FriendScreen";
 import ViewCollectionScreen from "./component/ViewCollectionScreen";
 import MoviesScreen from "./component/MoviesScreen";
 import MovieDetailsScreen from "./component/MovieDetailsScreen";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import {
   home,
@@ -38,7 +36,6 @@ import {
   update_party_time,
   get_recommended_users,
 } from "./api/api";
-import { duration } from "@material-ui/core";
 
 class App extends Component {
   state = {
@@ -202,7 +199,7 @@ class App extends Component {
   };
 
   makeUserTables = (uemail) => {
-    if (uemail == this.state.email) {
+    if (uemail === this.state.email) {
       home(uemail).then((data) => {
         const email_list = [];
 
@@ -512,8 +509,8 @@ class App extends Component {
       alert("Please enter a time for the party before proceeding.");
     } else {
       create_party(user_id, v_movie, v_time).then((data) => {
-        if (!data) {
-          alert("Uh oh, something went wrong!");
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Please enter a future time");
         } else {
           if (this.state.party_open) {
             this.setShowPassword(this.state.party_open, "po");
@@ -660,8 +657,8 @@ class App extends Component {
     });
 
     update_party_time(p_id, newTime).then((data) => {
-      if (!data) {
-        alert("Uh oh, something went wrong!");
+      if (data.toString().substring(0, 3) === "ERR") {
+        alert("Please enter a future time");
       } else {
         //alert("Party time was updated to " + newTime);
         this.makeUserTables(email);
@@ -704,8 +701,8 @@ class App extends Component {
         }
       }
 
-      for (var key in data.m_reviews) {
-        email_list.push(data.m_reviews[key].user_email);
+      for (var k in data.m_reviews) {
+        email_list.push(data.m_reviews[k].user_email);
       }
 
       console.log(email_list);
@@ -781,7 +778,7 @@ class App extends Component {
       alert("Please fill in all required fields.");
     } else {
       update_review(user_id, m_id, rating, comments).then((data) => {
-        if (data == undefined) {
+        if (data === undefined) {
           if (this.state.review_open) {
             this.setShowPassword(this.state.review_open, "ro");
           }
@@ -829,7 +826,6 @@ class App extends Component {
       showPassword,
       logged_in,
       email,
-      password,
       first_name,
       collection_name,
       dcollection_name,
@@ -858,8 +854,6 @@ class App extends Component {
       movie_id,
       movie_name,
       movie_open,
-      collection_id,
-      watched,
       emails,
       movie_ids,
       poster_link,
@@ -867,7 +861,6 @@ class App extends Component {
       party_open,
       party_id,
       puser_open,
-      puser_email,
       m_reviews,
       review_open,
       r_comments,
@@ -945,11 +938,6 @@ class App extends Component {
           />
           <Route
             exact
-            path="/create-collection"
-            render={() => <CreateCollectionScreen />}
-          />
-          <Route
-            exact
             path="/friend"
             render={() => (
               <FriendScreen
@@ -982,8 +970,7 @@ class App extends Component {
                 onPartyDialog={this.onPartyDialog}
                 onCreateParty={this.onCreateParty}
                 setShowPassword={this.setShowPassword}
-                movie_open={this.movie_open}
-                onViewMovie={this.onViewMovie}
+                movie_open={movie_open}
                 friend_collection={friend_collection}
                 onDuplicateCollection={this.onDuplicateCollection}
                 collection_open={collection_open}
@@ -1083,11 +1070,6 @@ class App extends Component {
                 email={email}
               />
             )}
-          />
-          <Route
-            exact
-            path="/create-review"
-            render={() => <CreateReviewScreen />}
           />
         </Router>
       </div>

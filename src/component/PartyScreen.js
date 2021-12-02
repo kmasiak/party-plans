@@ -6,8 +6,6 @@ import PartyPlans from "../images/party-plans.png";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import SaveIcon from "@material-ui/icons/Save";
-import TimeIcon from "@material-ui/icons/Schedule";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -26,34 +24,9 @@ import { Link, Redirect } from "react-router-dom";
 class PartyScreen extends Component {
   render() {
     const {
-      friends,
-      parties,
-      collections,
-      collectionElements,
-      first_name,
       logged_in,
       onLogout,
-      collection_open,
-      friend_open,
       setShowPassword,
-      handleFemail,
-      onAddFriend,
-      onAddCollection,
-      handleCollectionName,
-      onRemoveFriend,
-      onRemoveCollection,
-      onViewFriend,
-      friend_email,
-      onViewMovie,
-      onAddMovies,
-      collection_id,
-      collection_name,
-      onMovieSearch,
-      onRemoveElement,
-      onUpdateElement,
-      onCreateParty,
-      onRemoveParty,
-      movie_id,
       movie_name,
       partyUsers,
       onAddUser,
@@ -63,7 +36,6 @@ class PartyScreen extends Component {
       onRemoveUser,
       handlePartyTime,
       party_time,
-      party_url,
       recUsers,
       onAddRecUser,
     } = this.props;

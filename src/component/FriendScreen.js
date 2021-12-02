@@ -2,14 +2,9 @@ import React, { Component } from "react";
 import "../css/HomeScreen.css";
 
 import { Button } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EventIcon from "@material-ui/icons/Event";
-import LinkIcon from "@material-ui/icons/Link";
-import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
-import TextField from "@mui/material/TextField";
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -20,11 +15,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 
 import { Redirect, Link } from "react-router-dom";
 
@@ -103,7 +93,7 @@ class FriendScreen extends Component {
                       </TableCell>
                       <TableCell align="left">{row.l_name}</TableCell>
                       <TableCell align="center">
-                        {(!emails.some(x => x == row.email)) && <Button
+                        {(!emails.some(x => x === row.email)) && <Button
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<PersonAddIcon />}

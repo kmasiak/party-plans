@@ -6,10 +6,7 @@ import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EventIcon from "@material-ui/icons/Event";
-import LinkIcon from "@material-ui/icons/Link";
-import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
 import TextField from "@mui/material/TextField";
 
@@ -29,39 +26,22 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { Link, Redirect } from "react-router-dom";
-import { TrendingUp } from "@material-ui/icons";
 
 class ViewCollectionScreen extends Component {
   render() {
     const {
-      friends,
-      parties,
-      collections,
       collectionElements,
-      first_name,
       logged_in,
       onLogout,
       collection_open,
-      friend_open,
-      movie_open,
       setShowPassword,
-      handleFemail,
-      onAddFriend,
-      onAddCollection,
       handleDCollectionName,
-      onRemoveFriend,
-      onRemoveCollection,
-      onViewFriend,
-      friend_email,
       onViewMovie,
-      onAddMovies,
-      collection_id,
       collection_name,
       onMovieSearch,
       onRemoveElement,
       onUpdateElement,
       onCreateParty,
-      renderMovieSearch,
       friend_collection,
       onDuplicateCollection,
       party_open,

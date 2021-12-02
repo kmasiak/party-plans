@@ -500,6 +500,8 @@ export const update_review = async (u_email, movie_id, rating, comments) => {
         v_comments: comments,
       }),
     });
+    const data = await response.json();
+    return data;
   } catch (err) {
     console.log("ERR ", err);
     return "ERR " + err;
