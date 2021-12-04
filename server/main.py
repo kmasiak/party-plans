@@ -6,21 +6,34 @@ from flask_cors import CORS
 import hashlib
 import requests
 
+
+# This python flask app acts as the intermediary between the front end and the database
+# It runs on port 5000 with the specified routes to be called with a JSON request body
 app = Flask(__name__)
 
 CORS(app)
 
-@app.route('/party/poster-link', methods=['POST'])
-def get_link():
+# Calls the user_register procedure in the database to insert a user to the user table
+@app.route('/party/register', methods=['POST'])
+def register():
 
-    movie_id = request.json.get('movie_id') 
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
 
-    response = requests.get("https://api.themoviedb.org/3/movie/" + movie_id + "?api_key=5f082672bb0fe7eb48029d6c82c6d764&language=en-US")
+    # Input variables
+    email = request.json.get('email')
+    first_name = request.json.get('first_name')
+    last_name = request.json.get('last_name')
+    password = request.json.get('password')
 
-    return jsonify({
-        'poster_link': "https://image.tmdb.org/t/p/original" + response.json()['poster_path']
-    })
+    # Passwords are stored in the database as a sha1 hash for security purposes
+    password = hashlib.sha1(password.encode()).hexdigest()
 
+    return cur.callproc('user_register', [email, first_name, last_name, password])
+
+# Calls the user_login procedure in the database to compare the input credentials with those in the database
+# Returns the user's email if credentials are valid 
 @app.route('/party/login', methods=['POST'])
 def login():
 
@@ -28,10 +41,11 @@ def login():
     partydb.autocommit = True
     cur = partydb.cursor(dictionary=True)
 
+    # Input variables
     email = request.json.get('email') 
     password = request.json.get('password')
 
-
+    # Passwords are stored in the database as a sha1 hash for security purposes
     password = hashlib.sha1(password.encode()).hexdigest()
 
     cur.callproc('user_login', [email, password]) 
@@ -48,22 +62,8 @@ def login():
 
     return jsonify(data[0])
 
-@app.route('/party/register', methods=['POST'])
-def register():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    email = request.json.get('email')
-    first_name = request.json.get('first_name')
-    last_name = request.json.get('last_name')
-    password = request.json.get('password')
-
-    password = hashlib.sha1(password.encode()).hexdigest()
-
-    return cur.callproc('user_register', [email, first_name, last_name, password])
-
+# Calls the get_followed, get_parties, and get_lists procedures for a user's home page
+# Returns with data for a user's freinds list, collection list, and party list
 @app.route('/party/get-home', methods=['POST']) 
 def get_home():
 
@@ -71,6 +71,7 @@ def get_home():
     partydb.autocommit = True
     cur = partydb.cursor(dictionary=True)
 
+    # Input variables
     email = request.json.get('email')
 
     friends, parties, collections = [], [], []
@@ -99,26 +100,8 @@ def get_home():
         'collections': collections
     })
 
-@app.route('/party/get-party-users', methods=['POST'])
-def get_party_users():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    party_id = request.json.get('party_id')
-    users = []
-    
-    cur.callproc('get_party_users', [party_id])
-
-    for set in cur.stored_results():
-        for row in set:
-            users.append(dict(zip(set.column_names,row))) 
-
-    return jsonify({
-        'party_users': users
-    })
-
+# Calls the follow procedure in the database to add a freind to a user's friend list. 
+# Inserts a record to the follower table
 @app.route('/party/add-friend', methods=['POST'])
 def add_friend():
 
@@ -126,10 +109,25 @@ def add_friend():
     partydb.autocommit = True
     cur = partydb.cursor(dictionary=True)
 
+    # Input variables
     my_id = request.json.get('my_id')
     friend_id = request.json.get('id')
 
     return cur.callproc('follow', [my_id, friend_id])
+
+# 
+@app.route('/party/delete-friend', methods=['POST'])
+def del_friend():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    # Input variables
+    my_id = request.json.get('my_id')
+    friend_id = request.json.get('id')
+    
+    return cur.callproc('unfollow', [my_id, friend_id])
 
 @app.route('/party/add-collection', methods=['POST'])
 def add_collection():
@@ -143,85 +141,6 @@ def add_collection():
     
     return cur.callproc('list_create', [email, collection_name])
 
-@app.route('/party/add-element', methods=['POST'])
-def add_element():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    list_id = request.json.get('v_collection_id')
-    movie_id = request.json.get('v_movie_id')
-    hasWatched = 0
-    
-    return cur.callproc('element_add', [list_id, movie_id, hasWatched])
-
-@app.route('/party/add-review', methods=['POST'])
-def add_review():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    u_email = request.json.get('user_email')
-    movie_id = request.json.get('v_movie_id')
-    rating = request.json.get('v_rating')
-    comments = request.json.get('v_comments')
-    
-    return cur.callproc('review_create', [u_email, movie_id, rating, comments])
-
-@app.route('/party/update-review', methods=['POST'])
-def update_review():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    u_email = request.json.get('user_email')
-    movie_id = request.json.get('v_movie_id')
-    rating = request.json.get('v_rating')
-    comments = request.json.get('v_comments')
-    
-    return cur.callproc('review_update', [u_email, movie_id, rating, comments])
-
-@app.route('/party/create-party', methods=['POST'])
-def create_party():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    movie_id = request.json.get('movie_id')
-    time = request.json.get('party_time')
-    link = 'https://google.com'
-    user_email = request.json.get('email')
-    
-    return cur.callproc('party_create', [movie_id, time, link, user_email])
-
-@app.route('/party/add-party-users', methods=['POST'])
-def add_party_users():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    user_email = request.json.get('email')
-    party_id = request.json.get('party_id')
-    
-    return cur.callproc('party_add_user', [user_email, party_id])
-
-@app.route('/party/delete-friend', methods=['POST'])
-def del_friend():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    my_id = request.json.get('my_id')
-    friend_id = request.json.get('id')
-    
-    return cur.callproc('unfollow', [my_id, friend_id])
-
 @app.route('/party/delete-collection', methods=['POST'])
 def del_collection():
 
@@ -232,65 +151,6 @@ def del_collection():
     list_id = request.json.get('collection_id')
     
     return cur.callproc('list_delete', [list_id])
-
-@app.route('/party/delete-element', methods=['POST'])
-def del_element():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    list_id = request.json.get('collection_id')
-    movie_id = request.json.get('movie_id')
-    
-    return cur.callproc('element_delete', [list_id, movie_id])
-
-@app.route('/party/delete-party', methods=['POST'])
-def del_party():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    party_id = request.json.get('party_id')
-    
-    return cur.callproc('party_delete', [party_id])
-
-@app.route('/party/delete-user-party', methods=['POST'])
-def del_user_party():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    user_id = request.json.get('user_id')
-    party_id = request.json.get('party_id')
-    
-    return cur.callproc('party_delete_user', [user_id, party_id])
-
-@app.route('/party/update-party-time', methods=['POST'])
-def update_party_time():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    party_id = request.json.get('party_id')
-    new_time = request.json.get('new_time')
-    
-    return cur.callproc('party_update_time', [party_id, new_time])
-
-@app.route('/party/update-element', methods=['POST'])
-def update_element():
-
-    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
-    partydb.autocommit = True
-    cur = partydb.cursor(dictionary=True)
-
-    list_id = request.json.get('collection_id')
-    movie_id = request.json.get('movie_id')
-    
-    return cur.callproc('element_update', [list_id, movie_id])
 
 @app.route('/party/view-collection', methods=['POST'])
 def view_collection():
@@ -324,6 +184,43 @@ def duplicate_collection():
     list_id = request.json.get('collection_id')
     
     return cur.callproc('duplicate_list', [email, list_name, list_id])
+
+@app.route('/party/add-element', methods=['POST'])
+def add_element():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('v_collection_id')
+    movie_id = request.json.get('v_movie_id')
+    hasWatched = 0
+    
+    return cur.callproc('element_add', [list_id, movie_id, hasWatched])
+
+@app.route('/party/delete-element', methods=['POST'])
+def del_element():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('collection_id')
+    movie_id = request.json.get('movie_id')
+    
+    return cur.callproc('element_delete', [list_id, movie_id])
+
+@app.route('/party/update-element', methods=['POST'])
+def update_element():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    list_id = request.json.get('collection_id')
+    movie_id = request.json.get('movie_id')
+    
+    return cur.callproc('element_update', [list_id, movie_id])
 
 @app.route('/party/search', methods=['POST'])
 def search_movies():
@@ -403,6 +300,126 @@ def get_movie_contents():
         'm_reviews': reviews
     })
 
+@app.route('/party/poster-link', methods=['POST'])
+def get_link():
+
+    movie_id = request.json.get('movie_id') 
+
+    response = requests.get("https://api.themoviedb.org/3/movie/" + movie_id + "?api_key=5f082672bb0fe7eb48029d6c82c6d764&language=en-US")
+
+    return jsonify({
+        'poster_link': "https://image.tmdb.org/t/p/original" + response.json()['poster_path']
+    })
+
+@app.route('/party/add-review', methods=['POST'])
+def add_review():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    u_email = request.json.get('user_email')
+    movie_id = request.json.get('v_movie_id')
+    rating = request.json.get('v_rating')
+    comments = request.json.get('v_comments')
+    
+    return cur.callproc('review_create', [u_email, movie_id, rating, comments])
+
+@app.route('/party/update-review', methods=['POST'])
+def update_review():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    u_email = request.json.get('user_email')
+    movie_id = request.json.get('v_movie_id')
+    rating = request.json.get('v_rating')
+    comments = request.json.get('v_comments')
+    
+    return cur.callproc('review_update', [u_email, movie_id, rating, comments])
+
+@app.route('/party/create-party', methods=['POST'])
+def create_party():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    movie_id = request.json.get('movie_id')
+    time = request.json.get('party_time')
+    link = 'https://google.com'
+    user_email = request.json.get('email')
+    
+    return cur.callproc('party_create', [movie_id, time, link, user_email])
+
+@app.route('/party/delete-party', methods=['POST'])
+def del_party():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    party_id = request.json.get('party_id')
+    
+    return cur.callproc('party_delete', [party_id])
+
+@app.route('/party/add-party-users', methods=['POST'])
+def add_party_users():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    user_email = request.json.get('email')
+    party_id = request.json.get('party_id')
+    
+    return cur.callproc('party_add_user', [user_email, party_id])
+
+@app.route('/party/delete-user-party', methods=['POST'])
+def del_user_party():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    user_id = request.json.get('user_id')
+    party_id = request.json.get('party_id')
+    
+    return cur.callproc('party_delete_user', [user_id, party_id])
+
+@app.route('/party/update-party-time', methods=['POST'])
+def update_party_time():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    party_id = request.json.get('party_id')
+    new_time = request.json.get('new_time')
+    
+    return cur.callproc('party_update_time', [party_id, new_time])
+
+@app.route('/party/get-party-users', methods=['POST'])
+def get_party_users():
+
+    partydb = mysql.connector.connect(user='admin', password='Applesauce12', host='database-project.cbh1cn1j4qvl.us-east-2.rds.amazonaws.com', database='party_planner')
+    partydb.autocommit = True
+    cur = partydb.cursor(dictionary=True)
+
+    party_id = request.json.get('party_id')
+    users = []
+    
+    cur.callproc('get_party_users', [party_id])
+
+    for set in cur.stored_results():
+        for row in set:
+            users.append(dict(zip(set.column_names,row))) 
+
+    return jsonify({
+        'party_users': users
+    })
+
 @app.route('/party/get-recommended-users', methods=['POST']) 
 def get_recommended_users():
 
@@ -424,10 +441,5 @@ def get_recommended_users():
     return jsonify({
         'rec_users': users,
     })
-
-
-@app.route('/health-check', methods=['GET'])
-def heatlhcheck():
-    return 'REEEEEEEE'
 
 app.run()
