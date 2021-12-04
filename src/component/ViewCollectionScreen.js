@@ -29,6 +29,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class ViewCollectionScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       collectionElements,
       logged_in,
@@ -49,6 +50,7 @@ class ViewCollectionScreen extends Component {
       onPartyDialog,
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -116,6 +118,7 @@ class ViewCollectionScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the elements data from the state and maps them into rows */}
                   {collectionElements.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -130,6 +133,7 @@ class ViewCollectionScreen extends Component {
                       <TableCell component="th" scope="row">
                         {new Date(row.release_date).toDateString()}
                       </TableCell>
+                      {/* Removes button if viewing friend collection */}
                       {!friend_collection && (
                         <TableCell align="center">
                           <Checkbox
@@ -152,6 +156,7 @@ class ViewCollectionScreen extends Component {
                           View
                         </Button>
                       </TableCell>
+                      {/* Removes button if viewing friend collection */}
                       {!friend_collection && (
                         <TableCell align="center">
                           <Button
@@ -165,6 +170,7 @@ class ViewCollectionScreen extends Component {
                           >
                             Create Party
                           </Button>
+                          {/* Dialog opens to propmt for party time for selected movie */}
                           <Dialog
                             open={party_open}
                             onClose={() => setShowPassword(party_open, "po")}
@@ -199,6 +205,7 @@ class ViewCollectionScreen extends Component {
                           </Dialog>
                         </TableCell>
                       )}
+                      {/* Removes button if viewing friend collection */}
                       {!friend_collection && (
                         <TableCell align="center">
                           <Button
@@ -222,6 +229,7 @@ class ViewCollectionScreen extends Component {
               </Table>
             </TableContainer>
             <br />
+            {/* If viewing friend collection shows option to duplicate collection, else can add movies */}
             {!friend_collection ? (
               <Button
                 id="addMoviesBtn"

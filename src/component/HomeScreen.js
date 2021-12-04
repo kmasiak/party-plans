@@ -29,6 +29,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class HomeScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       friends,
       parties,
@@ -53,6 +54,7 @@ class HomeScreen extends Component {
       toEST,
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -68,7 +70,7 @@ class HomeScreen extends Component {
           >
             Welcome, {first_name}
           </h1>
-
+          {/* Upon button click, dialog pops up for user to add friend via email */}
           <Button
             style={{
               backgroundColor: "#dc143c",
@@ -110,6 +112,7 @@ class HomeScreen extends Component {
               <Button onClick={() => onAddFriend(friend_email)}>Submit</Button>
             </DialogActions>
           </Dialog>
+          {/* Upon button click, dialog pops up for user to add collection with a title */}
           <Button
             style={{
               backgroundColor: "#dc143c",
@@ -186,6 +189,7 @@ class HomeScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the friends data from the state and maps them into rows */}
                   {friends.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -239,6 +243,7 @@ class HomeScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the collections data from the state and maps them into rows */}
                   {collections.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -300,6 +305,7 @@ class HomeScreen extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
+              {/* Takes the parties data from the state and maps them into rows */}
               {parties.map((row) => (
                 <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

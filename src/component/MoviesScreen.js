@@ -21,6 +21,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class MoviesScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       logged_in,
       onLogout,
@@ -38,6 +39,7 @@ class MoviesScreen extends Component {
       movie_ids,
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -186,6 +188,7 @@ class MoviesScreen extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
+                    {/* Takes the movie data from the state and maps them into rows */}
                     {movies.map((row) => (
                       <TableRow
                         sx={{
