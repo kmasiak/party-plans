@@ -27,6 +27,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class MovieDetailsScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       logged_in,
       onLogout,
@@ -51,6 +52,7 @@ class MovieDetailsScreen extends Component {
       email
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -101,6 +103,7 @@ class MovieDetailsScreen extends Component {
                   alt="movie poster"
                 />
               </div>
+              {/* Populates movie description via data from movie states */}
               <div
                 style={{ display: "flex", flex: 0.5, flexDirection: "column" }}
               >
@@ -123,6 +126,7 @@ class MovieDetailsScreen extends Component {
             </div>
             <br />
 
+            {/* Shows add review button unless you have already written a review */}
             {rev_emails.some(x => x === email) ? (
             <Container maxWidth="sm">
               <Button
@@ -233,6 +237,7 @@ class MovieDetailsScreen extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
+              {/* Takes the reviews data from the state and maps them into rows */}
               {m_reviews.map((row) => (
                 <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

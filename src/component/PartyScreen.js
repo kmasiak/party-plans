@@ -23,6 +23,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class PartyScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       logged_in,
       onLogout,
@@ -40,6 +41,7 @@ class PartyScreen extends Component {
       onAddRecUser,
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -130,6 +132,7 @@ class PartyScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the party users data from the state and maps them into rows */}
                   {partyUsers.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -218,6 +221,7 @@ class PartyScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the recommended users data from the state and maps them into rows */}
                   {recUsers.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -232,7 +236,6 @@ class PartyScreen extends Component {
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<AddIcon />}
                           onClick={() => onAddRecUser(row.user_email1)}
-                          //onClick={() => onRemoveUser(row.user_email, party_id)}
                         >
                           Add User
                         </Button>

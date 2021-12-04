@@ -20,6 +20,7 @@ import { Redirect, Link } from "react-router-dom";
 
 class FriendScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       logged_in,
       onLogout,
@@ -31,6 +32,7 @@ class FriendScreen extends Component {
       onViewCollection
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -83,6 +85,7 @@ class FriendScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the friends friends data from the state and maps them into rows */}
                   {f_friends.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -93,6 +96,7 @@ class FriendScreen extends Component {
                       </TableCell>
                       <TableCell align="left">{row.l_name}</TableCell>
                       <TableCell align="center">
+                        {/* No add friend button if this user is already your friend  */}
                         {(!emails.some(x => x === row.email)) && <Button
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
@@ -123,6 +127,7 @@ class FriendScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the friends collection data from the state and maps them into rows */}
                   {f_collections.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

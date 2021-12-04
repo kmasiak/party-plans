@@ -16,6 +16,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class LoginScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       showPassword,
       setShowPassword,
@@ -25,6 +26,7 @@ class LoginScreen extends Component {
       onLogin,
     } = this.props;
 
+    // route to home screen upon successful login
     if (logged_in) {
       return <Redirect to="/home" />;
     }
