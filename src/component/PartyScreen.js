@@ -6,7 +6,6 @@ import PartyPlans from "../images/party-plans.png";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import SaveIcon from "@material-ui/icons/Save";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,63 +14,38 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
-import { Link } from "react-router-dom";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 
-const movieTitle = "Shrek";
+import { Link, Redirect } from "react-router-dom";
 
-function createUsersData(fname, lname) {
-  return { fname, lname };
-}
-
-function onAddUsers() {
-  //
-}
-
-function onSaveParty() {
-  //
-}
-
-function onDiscardParty() {
-  //
-}
-
-const rowsUsersTable = [
-  createUsersData("Jakob", "Short"),
-  createUsersData("Sam", "Bracellari"),
-  createUsersData("Olivia", "Yee"),
-  createUsersData("Kyle", "Masiak"),
-];
-
-class CreatePartyScreen extends Component {
+class PartyScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
-      friends,
-      parties,
-      collections,
-      collectionElements,
-      first_name,
       logged_in,
       onLogout,
-      collection_open,
-      friend_open,
       setShowPassword,
-      handleFemail,
-      onAddFriend,
-      onAddCollection,
-      handleCollectionName,
-      onRemoveFriend,
-      onRemoveCollection,
-      onViewFriend,
-      friend_email,
-      onViewMovie,
-      onAddMovies,
-      collection_id,
-      collection_name,
-      onMovieSearch,
-      onRemoveElement,
-      onUpdateElement,
-      onCreateParty,
+      movie_name,
+      partyUsers,
+      onAddUser,
+      party_id,
+      puser_open,
+      handleUemail,
+      onRemoveUser,
+      handlePartyTime,
+      party_time,
+      recUsers,
+      onAddRecUser,
     } = this.props;
+
+    // Return to login screen if not logged in
+    if (!logged_in) {
+      return <Redirect to="/" />;
+    }
+
     return (
       <div>
         <div
@@ -91,7 +65,7 @@ class CreatePartyScreen extends Component {
               marginRight: "auto",
             }}
           >
-            Create Party
+            View Party
           </h1>
 
           <Button
@@ -125,47 +99,23 @@ class CreatePartyScreen extends Component {
                   style={{
                     marginTop: "auto",
                     marginBottom: "auto",
+                    marginRight: "auto",
                   }}
                 >
-                  Movie: {movieTitle}
+                  Movie: {movie_name}
                 </h2>
 
                 <TextField
                   id="datetime-local"
                   label="Date & Time"
                   type="datetime-local"
-                  defaultValue="2021-12-15T21:30"
-                  style={{ marginRight: "auto", marginLeft: "24px" }}
+                  defaultValue={party_time}
+                  style={{ marginRight: "24px" }}
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  onChange={handlePartyTime}
                 />
-                <Button
-                  id="saveBtn"
-                  style={{
-                    backgroundColor: "#dc143c",
-                    color: "white",
-                    margin: "5px",
-                  }}
-                  variant="contained"
-                  endIcon={<SaveIcon />}
-                  onClick={() => onSaveParty()}
-                >
-                  Save Party
-                </Button>
-                <Button
-                  id="discardBtn"
-                  style={{
-                    backgroundColor: "#dc143c",
-                    color: "white",
-                    margin: "5px",
-                  }}
-                  variant="contained"
-                  endIcon={<DeleteIcon />}
-                  onClick={() => onDiscardParty()}
-                >
-                  Discard Party
-                </Button>
               </div>
               <br />
 
@@ -182,20 +132,22 @@ class CreatePartyScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rowsUsersTable.map((row) => (
+                  {/* Takes the party users data from the state and maps them into rows */}
+                  {partyUsers.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                       style={{ backgroundColor: "#f5f5f5" }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.fname}
+                        {row.f_name}
                       </TableCell>
-                      <TableCell align="center">{row.lname}</TableCell>
+                      <TableCell align="center">{row.l_name}</TableCell>
                       <TableCell align="center">
                         <Button
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<DeleteIcon />}
+                          onClick={() => onRemoveUser(row.user_email, party_id)}
                         >
                           Delete
                         </Button>
@@ -207,7 +159,7 @@ class CreatePartyScreen extends Component {
             </TableContainer>
             <br />
             <Button
-              id="addMoviesBtn"
+              id="addUsersBtn"
               style={{
                 backgroundColor: "#dc143c",
                 color: "white",
@@ -215,10 +167,84 @@ class CreatePartyScreen extends Component {
               }}
               variant="contained"
               endIcon={<AddIcon />}
-              onClick={() => onAddUsers()}
+              onClick={() => setShowPassword(puser_open, "puo")}
             >
               Add Users
             </Button>
+            <Dialog
+              open={puser_open}
+              onClose={() => setShowPassword(puser_open, "puo")}
+            >
+              <DialogTitle>Add a User</DialogTitle>
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="User Email"
+                  type="email"
+                  fullWidth
+                  variant="standard"
+                  inputProps={{ maxLength: 45 }}
+                  onChange={handleUemail}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setShowPassword(puser_open, "puo")}>
+                  Cancel
+                </Button>
+                <Button onClick={() => onAddUser(party_id, "")}>Submit</Button>
+              </DialogActions>
+            </Dialog>
+
+            <br />
+
+            <TableContainer
+              sx={{ marginRight: "auto", marginLeft: "auto", width: "80%" }}
+            >
+              <h3
+                style={{
+                  marginTop: "auto",
+                  marginBottom: "auto",
+                  marginRight: "auto",
+                }}
+              >
+                Recommended Users to Add to Party
+              </h3>
+              <Table>
+                <TableHead>
+                  <TableRow style={{ backgroundColor: "#dc143c" }}>
+                    <TableCell align="left" style={{ color: "white" }}>
+                      Email
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {/* Takes the recommended users data from the state and maps them into rows */}
+                  {recUsers.map((row) => (
+                    <TableRow
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      style={{ backgroundColor: "#f5f5f5" }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.user_email1}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          variant="contained"
+                          style={{ backgroundColor: "#dc143c", color: "white" }}
+                          endIcon={<AddIcon />}
+                          onClick={() => onAddRecUser(row.user_email1)}
+                        >
+                          Add User
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </FormGroup>
         </Container>
       </div>
@@ -226,4 +252,4 @@ class CreatePartyScreen extends Component {
   }
 }
 
-export default CreatePartyScreen;
+export default PartyScreen;

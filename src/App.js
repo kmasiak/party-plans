@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 
-import CreateCollectionScreen from "./component/CreateCollectionScreen";
-import CreatePartyScreen from "./component/CreatePartyScreen";
-import CreateReviewScreen from "./component/CreateReviewScreen";
+import PartyScreen from "./component/PartyScreen";
 import HomeScreen from "./component/HomeScreen";
 import LoginScreen from "./component/LoginScreen";
 import RegisterScreen from "./component/RegisterScreen";
@@ -10,7 +8,7 @@ import FriendScreen from "./component/FriendScreen";
 import ViewCollectionScreen from "./component/ViewCollectionScreen";
 import MoviesScreen from "./component/MoviesScreen";
 import MovieDetailsScreen from "./component/MovieDetailsScreen";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import {
   home,
@@ -26,18 +24,27 @@ import {
   del_element,
   update_element,
   create_party,
+  del_party,
   get_party_users,
   poster,
   get_movie_contents,
+  duplicate_collection,
+  add_party_users,
+  add_review,
+  update_review,
+  del_user_party,
+  update_party_time,
+  get_recommended_users,
 } from "./api/api";
-import { duration } from "@material-ui/core";
 
 class App extends Component {
+  //Initialize all state variables
   state = {
     friends: [],
     parties: [],
     collections: [],
     collectionElements: [],
+    partyUsers: [],
     f_friends: [],
     f_collections: [],
     friend_first_name: "",
@@ -49,6 +56,7 @@ class App extends Component {
     last_name: "",
     collection_id: "",
     collection_name: "",
+    dcollection_name: "",
     collection_open: false,
     friend_email: "",
     friend_open: false,
@@ -67,19 +75,35 @@ class App extends Component {
     m_genre: [],
     m_keyword: [],
     m_prod_comp: [],
+    m_reviews: [],
     movies: [],
+    movie_id: 0,
+    movie_name: "",
     movie_open: false,
     emails: [],
     movie_ids: [],
+    party_open: false,
     poster_link: "",
+    friend_collection: false,
+    party_id: 0,
+    puser_open: false,
+    puser_email: "",
+    review_open: false,
+    r_rating: "0",
+    r_comments: "",
+    party_time: "2021-12-15T21:30",
+    party_url: "",
+    recUsers: [],
+    rev_emails: [],
   };
 
-  getPosterLink = (m_id) => {
-    poster(m_id).then((data) => {
-      this.setState({
-        poster_link: data.poster_link,
-      });
-    });
+  //Handle and assign user input to a state variable
+  handleFname = (event) => {
+    this.setState({ first_name: event.target.value });
+  };
+
+  handleLname = (event) => {
+    this.setState({ last_name: event.target.value });
   };
 
   handleEmail = (event) => {
@@ -90,22 +114,24 @@ class App extends Component {
     this.setState({ password: event.target.value });
   };
 
-  handleFname = (event) => {
-    this.setState({ first_name: event.target.value });
-  };
-
-  handleLname = (event) => {
-    this.setState({ last_name: event.target.value });
-  };
-
   handleFemail = (event) => {
-    console.log(this.state.friend_email);
     this.setState({ friend_email: event.target.value });
   };
 
+  handleUemail = (event) => {
+    this.setState({ puser_email: event.target.value });
+  };
+
+  handleCollectionId = (event) => {
+    this.setState({ collection_id: event.target.value });
+  };
+
   handleCollectionName = (event) => {
-    console.log(this.state.collection_name);
     this.setState({ collection_name: event.target.value });
+  };
+
+  handleDCollectionName = (event) => {
+    this.setState({ dcollection_name: event.target.value });
   };
 
   handleTitle = (event) => {
@@ -132,58 +158,21 @@ class App extends Component {
     this.setState({ f_prod_comp: event.target.value });
   };
 
-  handleCollectionId = (event) => {
-    this.setState({ collection_id: event.target.value });
+  handleRating = (event) => {
+    this.setState({ r_rating: String(event.target.value) });
   };
 
-  setShowPassword = (bool_val, name) => {
-    if (name === "co") {
-      this.setState({ collection_open: !bool_val });
-    } else if (name === "fo") {
-      this.setState({ friend_open: !bool_val });
-    } else if (name === "fd") {
-      this.setState({ fd_open: !bool_val });
-    } else if (name === "po") {
-      this.setState({ party_open: !bool_val });
-    } else if (name === "mo") {
-      this.setState({ movie_open: !bool_val });
-    } else {
-      this.setState({ showPassword: !bool_val });
-    }
+  handleComments = (event) => {
+    this.setState({ r_comments: event.target.value });
   };
 
-  makeUserTables = (uemail) => {
-    if (uemail == this.state.email) {
-      home(uemail).then((data) => {
-        const email_list = [];
-
-        email_list.push(uemail);
-
-        this.setState({
-          friends: data.friends,
-          parties: data.parties,
-          collections: data.collections,
-        });
-        for (var key in data.friends) {
-          email_list.push(data.friends[key].email);
-        }
-        this.setState({ emails: email_list });
-
-        console.log(email_list);
-      });
-    } else {
-      home(uemail).then((data) => {
-        console.log(data.friends.email);
-        this.setState({
-          f_friends: data.friends,
-          f_collections: data.collections,
-        });
-      });
-    }
+  handlePartyTime = (event) => {
+    this.onUpdatePartyTime(event.target.value);
   };
 
-  makeCollectionTables = () => {};
-
+  //Registers a new user
+  //All user input fields must be filled in
+  //User email must be unique
   onRegisterUser = () => {
     const user_f_name = this.state.first_name;
     const user_l_name = this.state.last_name;
@@ -209,6 +198,7 @@ class App extends Component {
     }
   };
 
+  //Both email and password must match with info in the database in order to login
   onLogin = () => {
     const user_email = this.state.email;
     const user_password = this.state.password;
@@ -231,6 +221,7 @@ class App extends Component {
     }
   };
 
+  //Logs a user out of the application
   onLogout = () => {
     this.setState({
       logged_in: false,
@@ -239,6 +230,57 @@ class App extends Component {
     });
   };
 
+  //Displays user's password during login or register
+  //Also opens/closes pop up dialog boxes
+  setShowPassword = (bool_val, name) => {
+    if (name === "co") {
+      this.setState({ collection_open: !bool_val });
+    } else if (name === "fo") {
+      this.setState({ friend_open: !bool_val });
+    } else if (name === "fd") {
+      this.setState({ fd_open: !bool_val });
+    } else if (name === "po") {
+      this.setState({ party_open: !bool_val });
+    } else if (name === "mo") {
+      this.setState({ movie_open: !bool_val });
+    } else if (name === "puo") {
+      this.setState({ puser_open: !bool_val });
+    } else if (name === "ro") {
+      this.setState({ review_open: !bool_val });
+    } else {
+      this.setState({ showPassword: !bool_val });
+    }
+  };
+
+  //Populates the Friends, Parties, and Collections tables on the Home Page
+  makeUserTables = (uemail) => {
+    if (uemail === this.state.email) {
+      home(uemail).then((data) => {
+        const email_list = [];
+
+        email_list.push(uemail);
+
+        this.setState({
+          friends: data.friends,
+          parties: data.parties,
+          collections: data.collections,
+        });
+        for (var key in data.friends) {
+          email_list.push(data.friends[key].email);
+        }
+        this.setState({ emails: email_list });
+      });
+    } else {
+      home(uemail).then((data) => {
+        this.setState({
+          f_friends: data.friends,
+          f_collections: data.collections,
+        });
+      });
+    }
+  };
+
+  //Adds a friend by their email
   onAddFriend = (f_email) => {
     const user_id = this.state.email;
 
@@ -258,26 +300,7 @@ class App extends Component {
     }
   };
 
-  onAddCollection = () => {
-    const user_id = this.state.email;
-    const collectionName = this.state.collection_name;
-
-    if (collectionName === "") {
-      alert("Collection Name cannot be empty.");
-    } else {
-      add_collection(user_id, collectionName).then((data) => {
-        console.log(data);
-        if (data.toString().substring(0, 3) === "ERR") {
-          alert("You already have a collection with that name.");
-        } else {
-          this.setShowPassword(this.state.collection_open, "co");
-          this.makeUserTables(user_id);
-          alert("Collection created!");
-        }
-      });
-    }
-  };
-
+  //Removes a friend by their email
   onRemoveFriend = (f_email) => {
     const user_id = this.state.email;
     var r = window.confirm("Delete friend with email: " + f_email + "?");
@@ -297,6 +320,36 @@ class App extends Component {
     }
   };
 
+  //View a friend's profile
+  onViewFriend = (f_email, f_name) => {
+    this.makeUserTables(f_email);
+
+    this.setState({
+      friend_first_name: f_name,
+    });
+  };
+
+  //Adds a collection
+  onAddCollection = () => {
+    const user_id = this.state.email;
+    const collectionName = this.state.collection_name;
+
+    if (collectionName === "") {
+      alert("Collection Name cannot be empty.");
+    } else {
+      add_collection(user_id, collectionName).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("You already have a collection with that name.");
+        } else {
+          this.setShowPassword(this.state.collection_open, "co");
+          this.makeUserTables(user_id);
+          alert("Collection created!");
+        }
+      });
+    }
+  };
+
+  //Removes a collection
   onRemoveCollection = (list_id, collection_name) => {
     const user_id = this.state.email;
     const collection_id = list_id;
@@ -319,17 +372,12 @@ class App extends Component {
     }
   };
 
-  onViewFriend = (f_email, f_name) => {
-    this.makeUserTables(f_email);
-
-    this.setState({
-      friend_first_name: f_name,
-    });
-  };
-
-  onViewCollection = (list_id, list_name) => {
+  //View movies in a collection
+  //State variables are set to display data on the front-end
+  onViewCollection = (list_id, list_name, friend_coll) => {
     const collection_id = list_id;
     const collection_name = list_name;
+    const friend_collection = friend_coll;
     const element_list = [];
 
     view_collection(collection_id).then((data) => {
@@ -337,11 +385,9 @@ class App extends Component {
         element_list.push(data.collectionElements[key].movie_id);
       }
 
-      console.log(element_list);
-
-      this.setState({ movie_ids: element_list });
-
       this.setState({
+        movie_ids: element_list,
+        friend_collection: friend_collection,
         collection_name: collection_name,
         collectionElements: data.collectionElements,
         collection_id: collection_id,
@@ -349,6 +395,86 @@ class App extends Component {
     });
   };
 
+  //Duplicates a friend's collection to a user's collection
+  onDuplicateCollection = () => {
+    const u_email = this.state.email;
+    const v_collection_name = this.state.dcollection_name;
+    const v_collection_id = this.state.collection_id;
+    const user_id = this.state.email;
+
+    if (v_collection_name === "") {
+      alert("Collection Name cannot be empty.");
+    } else {
+      duplicate_collection(u_email, v_collection_name, v_collection_id).then(
+        (data) => {
+          if (data.toString().substring(0, 3) === "ERR") {
+            alert("You already have a collection with that name.");
+          } else {
+            this.setShowPassword(this.state.collection_open, "co");
+            this.makeUserTables(user_id);
+            alert("Collection created!");
+          }
+        }
+      );
+    }
+  };
+
+  //Adds an element to a collection
+  onAddElement = (movie_element) => {
+    const v_movie = movie_element;
+    const v_collection = this.state.collection_id;
+    const v_watched = this.state.watched;
+
+    add_element(v_collection, v_movie, v_watched).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        this.onViewCollection(v_collection, this.state.collection_name, false);
+      }
+    });
+  };
+
+  //Removes an element from a collection
+  onRemoveElement = (c_id, m_id) => {
+    const v_collection = c_id;
+    const v_movie = m_id;
+
+    var r = window.confirm("Delete movie from collection?");
+
+    if (r) {
+      del_element(v_collection, v_movie).then((data) => {
+        if (!data) {
+          alert("Uh oh, something went wrong!");
+        } else {
+          this.onViewCollection(
+            v_collection,
+            this.state.collection_name,
+            false
+          );
+          alert("Element deleted!");
+        }
+      });
+    } else {
+      alert("Delete Cancelled!");
+    }
+  };
+
+  //Updates the "Watched" status of an element/movie when a user clicks the "Watched" checkbox
+  onUpdateElement = (c_id, m_id) => {
+    const v_collection = c_id;
+    const v_movie = m_id;
+
+    update_element(v_collection, v_movie).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        this.onViewCollection(v_collection, this.state.collection_name, false);
+        alert("Element updated!");
+      }
+    });
+  };
+
+  //Use user input from filters to search for particular movies
   onMovieSearch = (new_page) => {
     var v_title;
     var v_director;
@@ -392,79 +518,8 @@ class App extends Component {
     );
   };
 
-  onAddElement = (movie_element) => {
-    const v_movie = movie_element;
-    const v_collection = this.state.collection_id;
-    const v_watched = this.state.watched;
-
-    add_element(v_collection, v_movie, v_watched).then((data) => {
-      if (!data) {
-        alert("Uh oh, something went wrong!");
-      } else {
-        this.onViewCollection(v_collection, this.state.collection_name);
-      }
-    });
-  };
-
-  onRemoveElement = (c_id, m_id) => {
-    const v_collection = c_id;
-    const v_movie = m_id;
-
-    var r = window.confirm("Delete movie from collection?");
-
-    if (r) {
-      del_element(v_collection, v_movie).then((data) => {
-        if (!data) {
-          alert("Uh oh, something went wrong!");
-        } else {
-          this.onViewCollection(v_collection, this.state.collection_name);
-          alert("Element deleted!");
-        }
-      });
-    } else {
-      alert("Delete Cancelled!");
-    }
-  };
-
-  onUpdateElement = (c_id, m_id) => {
-    const v_collection = c_id;
-    const v_movie = m_id;
-
-    update_element(v_collection, v_movie).then((data) => {
-      if (!data) {
-        alert("Uh oh, something went wrong!");
-      } else {
-        this.onViewCollection(v_collection, this.state.collection_name);
-        alert("Element updated!");
-      }
-    });
-  };
-
-  onCreateParty = (m_id) => {
-    const user_id = this.state.email;
-    const v_movie = m_id;
-
-    create_party(user_id, v_movie).then((data) => {
-      if (!data) {
-        alert("Uh oh, something went wrong!");
-      } else {
-        alert("Party created!");
-      }
-    });
-  };
-
-  onPartyUsers = (p_id) => {
-    const v_party_users = p_id;
-
-    get_party_users(v_party_users).then((data) => {
-      if (!data) {
-        alert("Uh oh, something went wrong!");
-      } else {
-        alert("Element updated!");
-      }
-    });
-  };
-
+  //View Movie Contents/Details
+  //State variables are set to display data on the front-end
   onViewMovie = (m_id) => {
     const id = String(m_id);
     this.getPosterLink(id);
@@ -478,6 +533,7 @@ class App extends Component {
       const genre = [];
       const keyword = [];
       const prod_comp = [];
+      const email_list = [];
 
       title = data.m_contents[0].title;
       director = data.m_contents[0].director;
@@ -498,6 +554,11 @@ class App extends Component {
           prod_comp.push(data.m_contents[key].pc_name);
         }
       }
+
+      for (var k in data.m_reviews) {
+        email_list.push(data.m_reviews[k].user_email);
+      }
+
       this.setState({
         m_title: title,
         m_director: director,
@@ -507,8 +568,272 @@ class App extends Component {
         m_genre: genre,
         m_keyword: keyword,
         m_prod_comp: prod_comp,
+        m_reviews: data.m_reviews,
+        movie_id: m_id,
+        rev_emails: email_list,
       });
     });
+  };
+
+  //Retrieves a link to a movie poster image
+  getPosterLink = (m_id) => {
+    poster(m_id).then((data) => {
+      this.setState({
+        poster_link: data.poster_link,
+      });
+    });
+  };
+
+  //Adds a review
+  onAddReview = () => {
+    const user_id = this.state.email;
+    const m_id = this.state.movie_id;
+    const rating = this.state.r_rating;
+    const comments = this.state.r_comments;
+
+    if (rating === "" || comments === "") {
+      alert("Please fill in all required fields.");
+    } else {
+      add_review(user_id, m_id, rating, comments).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Something went wrong");
+        } else {
+          if (this.state.review_open) {
+            this.setShowPassword(this.state.review_open, "ro");
+          }
+          this.onViewMovie(m_id);
+        }
+      });
+    }
+  };
+
+  //Updates the rating and/or comments of a review
+  onUpdateReview = () => {
+    const user_id = this.state.email;
+    const m_id = this.state.movie_id;
+    const rating = this.state.r_rating;
+    const comments = this.state.r_comments;
+
+    if (rating === "" || comments === "") {
+      alert("Please fill in all required fields.");
+    } else {
+      update_review(user_id, m_id, rating, comments).then((data) => {
+        if (data === undefined) {
+          if (this.state.review_open) {
+            this.setShowPassword(this.state.review_open, "ro");
+          }
+          this.onViewMovie(m_id);
+        } else {
+          alert("Something went wrong");
+        }
+      });
+    }
+  };
+
+  //Adds a party
+  onCreateParty = () => {
+    const user_id = this.state.email;
+    const v_movie = this.state.movie_id;
+    const v_time = this.state.party_time;
+
+    if (v_time === "") {
+      alert("Please enter a time for the party before proceeding.");
+    } else {
+      create_party(user_id, v_movie, v_time).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Please enter a future time");
+        } else {
+          if (this.state.party_open) {
+            this.setShowPassword(this.state.party_open, "po");
+            this.makeUserTables(user_id);
+          }
+          alert("Party created!");
+        }
+      });
+    }
+  };
+
+  //Removes a party
+  onRemoveParty = (p_id, movie_name) => {
+    const user_id = this.state.email;
+    var r = window.confirm("Delete party " + movie_name + "?");
+
+    if (r) {
+      del_party(p_id).then((data) => {
+        if (data.toString().substring(0, 3) === "ERR") {
+          alert("Party could not be deleted.");
+        } else {
+          this.makeUserTables(user_id);
+          alert("Party deleted!");
+        }
+      });
+    } else {
+      alert("Delete Cancelled!");
+    }
+  };
+
+  //View a Party
+  //State variables are set to display data on the front-end
+  onViewParty = (p_id, m_title, p_time, p_url) => {
+    const v_party_users = p_id;
+    const email = this.state.email;
+
+    this.setState({
+      movie_name: m_title,
+      party_id: p_id,
+      party_time: new Date(p_time).toISOString().slice(0, 16),
+      party_url: p_url,
+    });
+
+    get_party_users(v_party_users).then((data) => {
+      if (!data) {
+        alert("Uh oh, something went wrong!");
+      } else {
+        this.setState({
+          partyUsers: data.party_users,
+        });
+      }
+    });
+
+    get_recommended_users(email, p_id).then((data) => {
+      this.setState({
+        recUsers: data.rec_users,
+      });
+    });
+  };
+
+  //Sets the movie_id state variable
+  onPartyDialog = (m_id) => {
+    this.setShowPassword(this.state.party_open, "po");
+
+    this.setState({
+      movie_id: m_id,
+    });
+  };
+
+  //Adds a user to a party
+  onAddUser = (p_id, user_id) => {
+    var dialog = false;
+    if (user_id === "") {
+      user_id = this.state.puser_email;
+      dialog = true;
+    }
+
+    const my_email = this.state.email;
+
+    add_party_users(user_id, p_id).then((data) => {
+      if (data.toString().substring(0, 3) === "ERR") {
+        alert("Invalid email");
+      } else {
+        alert("User added!");
+        if (dialog) {
+          this.setShowPassword(this.state.puser_open, "puo");
+        }
+        get_party_users(p_id).then((data) => {
+          if (!data) {
+            alert("Uh oh, something went wrong!");
+          } else {
+            this.setState({
+              partyUsers: data.party_users,
+            });
+          }
+        });
+        get_recommended_users(my_email, p_id).then((data) => {
+          this.setState({
+            recUsers: data.rec_users,
+          });
+        });
+      }
+    });
+  };
+
+  //Removes a user from a party
+  onRemoveUser = (email, p_id) => {
+    var r = window.confirm("Delete user from party?");
+
+    const my_email = this.state.email;
+
+    if (r) {
+      del_user_party(email, p_id).then((data) => {
+        if (!data) {
+          alert("Uh oh, something went wrong!");
+        } else {
+          alert("User removed!");
+          get_party_users(p_id).then((data) => {
+            if (!data) {
+              alert("Uh oh, something went wrong!");
+            } else {
+              this.setState({
+                partyUsers: data.party_users,
+              });
+            }
+          });
+          get_recommended_users(my_email, p_id).then((data) => {
+            this.setState({
+              recUsers: data.rec_users,
+            });
+          });
+        }
+      });
+    } else {
+      alert("Delete Cancelled!");
+    }
+  };
+
+  //Updates the date and time of the party
+  onUpdatePartyTime = (newTime) => {
+    const email = this.state.email;
+    const p_id = this.state.party_id;
+
+    this.setState({
+      party_time: newTime,
+    });
+
+    update_party_time(p_id, newTime).then((data) => {
+      if (data.toString().substring(0, 3) === "ERR") {
+        alert("Please enter a future time");
+      } else {
+        this.makeUserTables(email);
+      }
+    });
+  };
+
+  //Adds recommended users to a party
+  onAddRecUser = (user_email) => {
+    const p_id = this.state.party_id;
+
+    this.setState({
+      puser_email: user_email,
+    });
+
+    this.onAddUser(p_id, user_email);
+  };
+
+  //Converts the datetime from SQL to a date in EST
+  toEST = (date) => {
+    var x = date.split(" ");
+    var twelve = Number(x[4].split(":")[0]);
+    var ampm = "AM";
+    if (twelve > 12) {
+      twelve = twelve - 12;
+      ampm = "PM";
+    }
+    return (
+      x[0] +
+      " " +
+      x[1] +
+      " " +
+      x[2] +
+      " " +
+      x[3] +
+      " " +
+      String(twelve) +
+      ":" +
+      x[4].split(":")[1] +
+      " " +
+      ampm +
+      " EST"
+    );
   };
 
   render() {
@@ -517,12 +842,13 @@ class App extends Component {
       parties,
       collections,
       collectionElements,
+      partyUsers,
       showPassword,
       logged_in,
       email,
-      password,
       first_name,
       collection_name,
+      dcollection_name,
       collection_open,
       friend_email,
       friend_open,
@@ -545,14 +871,29 @@ class App extends Component {
       m_keyword,
       m_prod_comp,
       movies,
+      movie_id,
+      movie_name,
       movie_open,
-      collection_id,
-      watched,
       emails,
       movie_ids,
       poster_link,
+      friend_collection,
+      party_open,
+      party_id,
+      puser_open,
+      m_reviews,
+      review_open,
+      r_comments,
+      r_rating,
+      party_time,
+      party_url,
+      recUsers,
+      rev_emails,
     } = this.state;
 
+    //Returns all UI Screens/Components along with their state variables
+    //State variables passed into each Component can then be used/accessed in that Component
+    //Routes/paths are defined and used to navigate to different Components
     return (
       <div style={{ minHeight: "100%", margin: 0 }}>
         <Router>
@@ -603,6 +944,7 @@ class App extends Component {
                 handleCollectionName={this.handleCollectionName}
                 onAddCollection={this.onAddCollection}
                 onRemoveCollection={this.onRemoveCollection}
+                onRemoveParty={this.onRemoveParty}
                 friend_email={friend_email}
                 friend_open={friend_open}
                 onAddFriend={this.onAddFriend}
@@ -612,13 +954,10 @@ class App extends Component {
                 onRemoveFriend={this.onRemoveFriend}
                 onViewFriend={this.onViewFriend}
                 onViewCollection={this.onViewCollection}
+                onViewParty={this.onViewParty}
+                toEST={this.toEST}
               />
             )}
-          />
-          <Route
-            exact
-            path="/create-collection"
-            render={() => <CreateCollectionScreen />}
           />
           <Route
             exact
@@ -632,6 +971,7 @@ class App extends Component {
                 onLogout={this.onLogout}
                 onAddFriend={this.onAddFriend}
                 emails={emails}
+                onViewCollection={this.onViewCollection}
               />
             )}
           />
@@ -650,10 +990,18 @@ class App extends Component {
                 onLogout={this.onLogout}
                 onRemoveElement={this.onRemoveElement}
                 onUpdateElement={this.onUpdateElement}
+                onPartyDialog={this.onPartyDialog}
                 onCreateParty={this.onCreateParty}
                 setShowPassword={this.setShowPassword}
-                movie_open={this.movie_open}
-                onViewMovie={this.onViewMovie}
+                movie_open={movie_open}
+                friend_collection={friend_collection}
+                onDuplicateCollection={this.onDuplicateCollection}
+                collection_open={collection_open}
+                handleCollectionName={this.handleCollectionName}
+                dcollection_name={dcollection_name}
+                handleDCollectionName={this.handleDCollectionName}
+                party_open={party_open}
+                handlePartyTime={this.handlePartyTime}
               />
             )}
           />
@@ -691,17 +1039,6 @@ class App extends Component {
               />
             )}
           />
-
-          <Route
-            exact
-            path="/create-party"
-            render={() => (
-              <CreatePartyScreen
-                logged_in={logged_in}
-                onLogout={this.onLogout}
-              />
-            )}
-          />
           <Route
             exact
             path="/view-movie"
@@ -718,13 +1055,43 @@ class App extends Component {
                 m_genre={m_genre}
                 m_keyword={m_keyword}
                 m_prod_comp={m_prod_comp}
+                m_reviews={m_reviews}
+                review_open={review_open}
+                r_rating={r_rating}
+                r_comments={r_comments}
+                setShowPassword={this.setShowPassword}
+                onAddReview={this.onAddReview}
+                handleRating={this.handleRating}
+                handleComments={this.handleComments}
+                onUpdateReview={this.onUpdateReview}
+                rev_emails={rev_emails}
+                email={email}
               />
             )}
           />
           <Route
             exact
-            path="/create-review"
-            render={() => <CreateReviewScreen />}
+            path="/view-party"
+            render={() => (
+              <PartyScreen
+                logged_in={logged_in}
+                onLogout={this.onLogout}
+                movie_id={movie_id}
+                movie_name={movie_name}
+                partyUsers={partyUsers}
+                onAddUser={this.onAddUser}
+                party_id={party_id}
+                puser_open={puser_open}
+                handleUemail={this.handleUemail}
+                setShowPassword={this.setShowPassword}
+                onRemoveUser={this.onRemoveUser}
+                handlePartyTime={this.handlePartyTime}
+                party_time={party_time}
+                partyl_url={party_url}
+                recUsers={recUsers}
+                onAddRecUser={this.onAddRecUser}
+              />
+            )}
           />
         </Router>
       </div>

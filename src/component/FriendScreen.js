@@ -2,14 +2,9 @@ import React, { Component } from "react";
 import "../css/HomeScreen.css";
 
 import { Button } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EventIcon from "@material-ui/icons/Event";
-import LinkIcon from "@material-ui/icons/Link";
-import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
-import TextField from "@mui/material/TextField";
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -21,15 +16,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-
 import { Redirect, Link } from "react-router-dom";
 
 class FriendScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       logged_in,
       onLogout,
@@ -37,9 +28,11 @@ class FriendScreen extends Component {
       f_friends,
       f_collections,
       onAddFriend, 
-      emails
+      emails,
+      onViewCollection
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -92,6 +85,7 @@ class FriendScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the friends friends data from the state and maps them into rows */}
                   {f_friends.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -102,7 +96,8 @@ class FriendScreen extends Component {
                       </TableCell>
                       <TableCell align="left">{row.l_name}</TableCell>
                       <TableCell align="center">
-                        {(!emails.some(x => x == row.email)) && <Button
+                        {/* No add friend button if this user is already your friend  */}
+                        {(!emails.some(x => x === row.email)) && <Button
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<PersonAddIcon />}
@@ -132,6 +127,7 @@ class FriendScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the friends collection data from the state and maps them into rows */}
                   {f_collections.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -145,6 +141,11 @@ class FriendScreen extends Component {
                           variant="contained"
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
+                          onClick={() =>
+                            onViewCollection(row.list_id, row.list_name, true)
+                          }
+                          component={Link}
+                          to="/view-collection"
                         >
                           View
                         </Button>

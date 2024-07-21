@@ -29,6 +29,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class HomeScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       friends,
       parties,
@@ -45,11 +46,15 @@ class HomeScreen extends Component {
       handleCollectionName,
       onRemoveFriend,
       onRemoveCollection,
+      onRemoveParty,
       onViewFriend,
       friend_email,
       onViewCollection,
+      onViewParty,
+      toEST,
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -65,7 +70,7 @@ class HomeScreen extends Component {
           >
             Welcome, {first_name}
           </h1>
-
+          {/* Upon button click, dialog pops up for user to add friend via email */}
           <Button
             style={{
               backgroundColor: "#dc143c",
@@ -107,6 +112,7 @@ class HomeScreen extends Component {
               <Button onClick={() => onAddFriend(friend_email)}>Submit</Button>
             </DialogActions>
           </Dialog>
+          {/* Upon button click, dialog pops up for user to add collection with a title */}
           <Button
             style={{
               backgroundColor: "#dc143c",
@@ -183,6 +189,7 @@ class HomeScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the friends data from the state and maps them into rows */}
                   {friends.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -236,6 +243,7 @@ class HomeScreen extends Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Takes the collections data from the state and maps them into rows */}
                   {collections.map((row) => (
                     <TableRow
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -250,7 +258,7 @@ class HomeScreen extends Component {
                           style={{ backgroundColor: "#dc143c", color: "white" }}
                           endIcon={<ViewIcon />}
                           onClick={() =>
-                            onViewCollection(row.list_id, row.list_name)
+                            onViewCollection(row.list_id, row.list_name, false)
                           }
                           component={Link}
                           to="/view-collection"
@@ -297,6 +305,7 @@ class HomeScreen extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
+              {/* Takes the parties data from the state and maps them into rows */}
               {parties.map((row) => (
                 <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -305,7 +314,7 @@ class HomeScreen extends Component {
                   <TableCell component="th" scope="row">
                     {row.title}
                   </TableCell>
-                  <TableCell align="left">{row.time}</TableCell>
+                  <TableCell align="left">{toEST(row.time)}</TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"
@@ -318,9 +327,14 @@ class HomeScreen extends Component {
                   </TableCell>
                   <TableCell align="center">
                     <Button
+                      component={Link}
+                      to="/view-party"
                       variant="contained"
                       style={{ backgroundColor: "#dc143c", color: "white" }}
                       endIcon={<ViewIcon />}
+                      onClick={() =>
+                        onViewParty(row.event_id, row.title, row.time, row.url)
+                      }
                     >
                       View
                     </Button>
@@ -330,6 +344,7 @@ class HomeScreen extends Component {
                       variant="contained"
                       style={{ backgroundColor: "#dc143c", color: "white" }}
                       endIcon={<DeleteIcon />}
+                      onClick={() => onRemoveParty(row.event_id, row.title)}
                     >
                       Delete
                     </Button>

@@ -16,6 +16,7 @@ import { Link, Redirect } from "react-router-dom";
 
 class RegisterScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
       handleEmail,
       handlePass,
@@ -27,7 +28,7 @@ class RegisterScreen extends Component {
       onRegister
     } = this.props
 
-
+    // Redirect to home if logged in
     if (logged_in) {
       return <Redirect to='/home' />
     }

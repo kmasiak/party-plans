@@ -3,16 +3,10 @@ import "../css/HomeScreen.css";
 
 import { Button, Container, FormGroup } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EventIcon from "@material-ui/icons/Event";
-import LinkIcon from "@material-ui/icons/Link";
-import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import ViewIcon from "@material-ui/icons/Visibility";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import Rating from "@mui/material/Rating";
+import EditIcon from '@mui/icons-material/Edit';
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -33,34 +27,11 @@ import { Link, Redirect } from "react-router-dom";
 
 class MovieDetailsScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
-      friends,
-      parties,
-      collections,
-      collectionElements,
-      first_name,
       logged_in,
       onLogout,
-      collection_open,
-      friend_open,
       setShowPassword,
-      handleFemail,
-      onAddFriend,
-      onAddCollection,
-      handleCollectionName,
-      onRemoveFriend,
-      onRemoveCollection,
-      onViewFriend,
-      friend_email,
-      onViewMovie,
-      collection_id,
-      collection_name,
-      f_title,
-      f_director,
-      f_actor,
-      f_genre,
-      f_keyword,
-      f_prod_comp,
       m_title,
       m_director,
       m_duration,
@@ -69,21 +40,19 @@ class MovieDetailsScreen extends Component {
       m_genre,
       m_keyword,
       m_prod_comp,
-      movies,
-      onMovieSearch,
-      handleTitle,
-      handleDirector,
-      handleActor,
-      handleGenre,
-      handleKeyword,
-      handleProd,
-      movie_open,
-      handleCollectionId,
-      onAddElement,
-      onShowMovie,
       poster_link,
+      m_reviews,
+      review_open,
+      r_rating,
+      onAddReview,
+      handleRating,
+      handleComments,
+      onUpdateReview,
+      rev_emails,
+      email
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -134,6 +103,7 @@ class MovieDetailsScreen extends Component {
                   alt="movie poster"
                 />
               </div>
+              {/* Populates movie description via data from movie states */}
               <div
                 style={{ display: "flex", flex: 0.5, flexDirection: "column" }}
               >
@@ -155,8 +125,139 @@ class MovieDetailsScreen extends Component {
               </div>
             </div>
             <br />
+
+            {/* Shows add review button unless you have already written a review */}
+            {rev_emails.some(x => x === email) ? (
+            <Container maxWidth="sm">
+              <Button
+                id="updateReviewBtn"
+                style={{
+                  backgroundColor: "#dc143c",
+                  color: "white",
+                  alignSelf: "center",
+                }}
+                variant="contained"
+                endIcon={<EditIcon />}
+                onClick={() => setShowPassword(review_open, "ro")}
+              >
+                Update Review
+              </Button>
+              <Dialog
+                open={review_open}
+                onClose={() => setShowPassword(review_open, "ro")}
+              >
+                <DialogTitle>Update a Review</DialogTitle>
+                <DialogContent>
+                  <Rating
+                    name="simple-controlled"
+                    value={parseInt(r_rating)}
+                    onChange={handleRating}
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Comments"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    inputProps={{ maxLength: 200 }}
+                    onChange={handleComments}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setShowPassword(review_open, "ro")}>
+                    Cancel
+                  </Button>
+                  <Button onClick={onUpdateReview}>Submit</Button>
+                </DialogActions>
+              </Dialog>
+            </Container>) :
+            (<Container maxWidth="sm">
+              <Button
+                id="addReviewBtn"
+                style={{
+                  backgroundColor: "#dc143c",
+                  color: "white",
+                  alignSelf: 'center'
+                }}
+                variant="contained"
+                endIcon={<AddIcon />}
+                onClick={() => setShowPassword(review_open, "ro")}
+              >
+                Add Review
+              </Button>
+              <Dialog
+              open={review_open}
+              onClose={() => setShowPassword(review_open, "ro")}
+              >
+                <DialogTitle>Add a Review</DialogTitle>
+                <DialogContent>
+                  <Rating
+                    name="simple-controlled"
+                    value={parseInt(r_rating)}
+                    onChange={handleRating}
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Comments"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    inputProps={{ maxLength: 200 }}
+                    onChange={handleComments}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setShowPassword(review_open, "ro")}>
+                    Cancel
+                  </Button>
+                  <Button onClick={onAddReview}>Submit</Button>
+                </DialogActions>
+              </Dialog>
+            </Container>)}
           </FormGroup>
         </Container>
+        <br />
+        <TableContainer
+          component={Paper}
+          style={{ marginRight: "auto", marginLeft: "auto", width: "50%" }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow style={{ backgroundColor: "#dc143c" }}>
+                <TableCell align="left" style={{ color: "white" }}>
+                  Rating
+                </TableCell>
+                <TableCell align="left" style={{ color: "white" }}>
+                  Comments
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {/* Takes the reviews data from the state and maps them into rows */}
+              {m_reviews.map((row) => (
+                <TableRow
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  style={{ backgroundColor: "#f5f5f5" }}
+                >
+                  <TableCell component="th" scope="row">
+                    <Rating
+                      name="simple-controlled"
+                      value={parseInt(row.rating)}
+                      readOnly
+                    />
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.comments}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     );
   }

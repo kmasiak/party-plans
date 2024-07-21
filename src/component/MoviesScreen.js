@@ -3,16 +3,9 @@ import "../css/HomeScreen.css";
 
 import { Button, Container, FormGroup } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EventIcon from "@material-ui/icons/Event";
-import LinkIcon from "@material-ui/icons/Link";
-import ListIcon from "@material-ui/icons/List";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import ViewIcon from "@material-ui/icons/Visibility";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 
 import PartyPlans from "../images/party-plans.png";
 
@@ -24,43 +17,16 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-
 import { Link, Redirect } from "react-router-dom";
 
 class MoviesScreen extends Component {
   render() {
+    // Pull the states from App.js
     const {
-      friends,
-      parties,
-      collections,
-      collectionElements,
-      first_name,
       logged_in,
       onLogout,
-      collection_open,
-      friend_open,
-      setShowPassword,
-      handleFemail,
-      onAddFriend,
-      onAddCollection,
-      handleCollectionName,
-      onRemoveFriend,
-      onRemoveCollection,
-      onViewFriend,
-      friend_email,
       onViewMovie,
-      collection_id,
       collection_name,
-      f_title,
-      f_director,
-      f_actor,
-      f_genre,
-      f_keyword,
-      f_prod_comp,
       movies,
       onMovieSearch,
       handleTitle,
@@ -69,13 +35,11 @@ class MoviesScreen extends Component {
       handleGenre,
       handleKeyword,
       handleProd,
-      movie_open,
-      handleCollectionId,
       onAddElement,
-      onShowMovie,
       movie_ids,
     } = this.props;
 
+    // Return to login screen if not logged in
     if (!logged_in) {
       return <Redirect to="/" />;
     }
@@ -224,6 +188,7 @@ class MoviesScreen extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
+                    {/* Takes the movie data from the state and maps them into rows */}
                     {movies.map((row) => (
                       <TableRow
                         sx={{
@@ -259,7 +224,7 @@ class MoviesScreen extends Component {
                           </Button>
                         </TableCell>
                         <TableCell align="center">
-                          {!movie_ids.some((x) => x == row.movie_id) && (
+                          {!movie_ids.some((x) => x === row.movie_id) && (
                             <Button
                               id="addMoviesBtn"
                               style={{
